@@ -2,587 +2,507 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>嘉義國中閱讀認證系統</title>
-    <!-- 引入 Google Fonts 讓字體更可愛一點 -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=Varela+Round&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>奕鈞老師的課堂 - iClass Pro v6.1</title>
     <style>
-        /* --- 🎨 1. 繽紛童趣風格設定 --- */
         :root {
-            /* 主色調：天空藍漸層 */
-            --primary-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --primary-solid: #00c6fb;
-            
-            /* 強調色：活力橘 */
-            --accent-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --accent-solid: #ff7eb3;
-
-            /* 背景色：柔和雲朵白 */
-            --bg-color: #f3f8ff;
-            --card-bg: #ffffff;
-            
-            /* 文字色 */
-            --text-main: #4a4a4a;
-            --text-sub: #7a7a7a;
-
-            /* 狀態色 */
-            --success: #2ecc71;
-            --error: #ff6b6b;
+            --ios-blue: #007AFF;
+            --ios-green: #34C759;
+            --ios-red: #FF3B30;
+            --ios-yellow: #FFCC00;
+            --text-primary: #1c1c1e;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.12);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.6);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        body {
-            background-color: var(--bg-color);
-            background-image: radial-gradient(#e1efff 2px, transparent 2px);
-            background-size: 30px 30px; /* 點點背景 */
-            color: var(--text-main);
-            font-family: 'Varela Round', 'Noto Sans TC', sans-serif; /* 圓潤字體 */
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        body { 
+            margin: 0; padding: 0; color: var(--text-primary); height: 100vh; 
+            display: flex; flex-direction: column; overflow: hidden;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            background-size: 400% 400%; animation: gradientBG 15s ease infinite;
         }
 
-        /* --- 🎈 Header：漂浮雲朵感 --- */
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        /* HEADER */
         header {
-            width: 90%;
-            max-width: 800px;
-            margin-top: 20px;
-            background: var(--primary-gradient);
-            color: white;
-            padding: 1.2rem;
-            text-align: center;
-            border-radius: 20px;
-            box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
-            position: relative;
-            overflow: hidden;
+            padding: 0.8rem 1.2rem; display: flex; justify-content: space-between; align-items: center;
+            z-index: 50; flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .brand { font-size: 1.3rem; font-weight: 800; color: var(--ios-blue); display: flex; align-items: center; gap: 12px; }
+        .brand-title { text-shadow: 0 0 8px rgba(0, 122, 255, 0.5); }
+        .teacher-avatar {
+            width: 40px; height: 40px; border-radius: 50%;
+            object-fit: cover; border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         
-        header h1 {
-            font-size: 1.6rem;
+        .toggle-btn {
+            background: rgba(0,0,0,0.05); border: none; padding: 6px 14px; border-radius: 100px;
+            font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 4px;
+            color: var(--ios-blue);
+        }
+        .toggle-btn.active { background: var(--ios-blue); color: white; box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3); }
+        .toggle-btn.active-green { background: var(--ios-green); color: white; box-shadow: 0 2px 8px rgba(52, 199, 89, 0.3); }
+
+        /* NAV */
+        nav { display: flex; justify-content: center; gap: 6px; padding: 10px; flex-shrink: 0; background: rgba(255,255,255,0.3); }
+        .nav-item { padding: 8px 16px; border: none; background: transparent; font-weight: 600; color: #86868b; cursor: pointer; border-radius: 12px; font-size: 0.95rem; }
+        .nav-item.active { background: white; color: #1c1c1e; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+
+        /* GUEST MODES */
+        body.mode-guest .admin-only { display: none !important; }
+        body.mode-guest .score-control button { display: none !important; }
+
+        /* MAIN */
+        main { flex: 1; overflow-y: auto; padding: 1rem; position: relative; scroll-behavior: smooth; }
+        .view-section { display: none; padding-bottom: 120px; } 
+        .view-section.active { display: block; animation: fadeIn 0.4s ease; }
+
+        /* DASHBOARD GRID */
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.2rem; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.55); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: var(--glass-border); border-radius: 20px; box-shadow: var(--shadow-sm);
+            transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .group-card { overflow: hidden; display: flex; flex-direction: column; position: relative; border: 3px solid transparent; }
+        
+        /* LOTTERY HIGHLIGHT STYLES */
+        .lottery-active {
+            box-shadow: 0 0 0 4px #FFD700, 0 0 20px #FFD700 !important;
+            border-color: #FFD700 !important;
+            transform: scale(1.02); z-index: 100;
+            background: rgba(255, 255, 255, 0.9) !important;
+            transition: all 0.1s;
+        }
+        .member-row.lottery-active { background: #FFF9C4 !important; border-radius: 8px; }
+
+        .group-rank-badge {
+            position: absolute; top: 10px; right: 10px; background: linear-gradient(135deg, #FFD700, #FDB931); color: #8a6d3b;
+            font-weight: 800; padding: 4px 12px; border-radius: 20px; font-size: 0.9rem; 
+            display: none; z-index: 10; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .group-card.rank-1 { box-shadow: 0 0 0 2px #FFD700, var(--shadow-md); transform: scale(1.02); z-index: 5; }
+        .group-card.rank-1 .group-rank-badge { display: block; }
+        .group-card.rank-2 .group-rank-badge { display: block; background: linear-gradient(135deg, #E0E0E0, #BDBDBD); color: #555; }
+        .group-card.rank-3 .group-rank-badge { display: block; background: linear-gradient(135deg, #cd7f32, #a0522d); color: #fff; }
+        
+        .group-header { padding: 1rem; background: rgba(255,255,255,0.4); display: flex; justify-content: space-between; align-items: center; }
+        .group-name { font-weight: 700; font-size: 1.15rem; }
+        .score-control { display: flex; align-items: center; gap: 8px; }
+        .score-display { font-size: 1.6rem; font-weight: 800; color: var(--ios-blue); min-width: 45px; text-align: center; }
+        .btn-circle { width: 32px; height: 32px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: 600; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .btn-minus { background: white; color: var(--ios-red); }
+        .btn-plus { background: white; color: var(--ios-blue); }
+        .member-list { padding: 0.8rem; flex: 1; }
+        .member-row { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0; border-bottom: 1px solid rgba(0,0,0,0.05); border: 2px solid transparent;}
+        .member-name { font-weight: 500; font-size: 1rem; }
+        .member-score { font-size: 1.1rem; font-weight: 600; color: #86868b; width: 30px; text-align: center;}
+
+        /* TIMER BOX - SOLID STYLE */
+        .timer-container {
+            margin-top: 2rem;
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 1px solid #e5e5ea;
+            text-align: center;
+        }
+        .timer-display {
+            font-size: 4rem;
+            font-weight: 900;
+            color: #1c1c1e;
+            font-variant-numeric: tabular-nums;
+            margin: 10px 0;
             letter-spacing: 2px;
-            text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
         }
+        .timer-controls { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .timer-input { width: 60px; padding: 5px; font-size: 1.2rem; text-align: center; border: 1px solid #ddd; border-radius: 8px; margin: 0 5px; }
+        .timer-label { font-size: 0.9rem; color: #8e8e93; font-weight: 600; }
 
-        /* --- 📦 Main Container --- */
-        main {
-            width: 100%;
-            max-width: 800px;
-            padding: 20px;
-            flex: 1;
-        }
+        /* ADMIN */
+        .admin-box { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(20px); border-radius: 20px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-md); border: var(--glass-border); }
+        .admin-section-title { font-size: 1.2rem; margin: 0 0 1rem 0; font-weight: 700; }
+        .form-control { width: 100%; padding: 12px; border: 1px solid rgba(0,0,0,0.1); border-radius: 12px; font-size: 1rem; margin-bottom: 10px; background: rgba(255,255,255,0.8); }
+        .btn-big { padding: 16px 24px; font-size: 1.1rem; font-weight: 700; border-radius: 16px; border:none; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); color: white; }
 
-        /* --- 🃏 卡片樣式：Q彈圓潤 --- */
-        .section-view { display: none; animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
-        .section-view.active { display: block; }
+        /* BUZZER */
+        #student-buzzer-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; background: rgba(255,255,255,0.95); backdrop-filter: blur(30px); padding: 20px; text-align: center; }
+        .buzzer-state-ready { background: #FFF9C4 !important; }
+        .buzzer-state-go { background: #E8F5E9 !important; }
+        .buzzer-status-text { font-size: 2.5rem; font-weight: 800; margin-bottom: 20px; }
+        .buzzer-btn-main { width: 220px; height: 220px; border-radius: 50%; border: none; background: radial-gradient(circle at 30% 30%, #ff6b6b, #ee5253); color: white; font-size: 2.5rem; font-weight: 800; box-shadow: 0 15px 35px rgba(238, 82, 83, 0.4); cursor: pointer; display: none; }
         
-        @keyframes popIn {
-            0% { opacity: 0; transform: scale(0.9) translateY(20px); }
-            100% { opacity: 1; transform: scale(1) translateY(0); }
+        /* LOGIN OVERLAY */
+        #login-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            z-index: 9999; display: flex; align-items: center; justify-content: center;
+            background-image: url('./assets/img/login_bg.jpg');
+            background-size: cover; background-position: center;
         }
+        .login-card { 
+            background: rgba(255,255,255,0.75); backdrop-filter: blur(25px);
+            padding: 2.5rem; border-radius: 24px; box-shadow: var(--shadow-md); 
+            width: 90%; max-width: 360px; text-align: center; border: 1px solid rgba(255,255,255,0.5);
+        }
+        .login-btn { width: 100%; padding: 14px; border-radius: 14px; border: none; font-weight: 600; font-size: 1rem; cursor: pointer; margin-top: 12px; }
+        #login-status-bar { margin-bottom: 15px; font-size: 0.9rem; font-weight: 600; color: #1c1c1e; padding: 8px; background: rgba(255,255,255,0.6); border-radius: 8px;}
 
-        .card {
-            background: var(--card-bg);
-            border-radius: 25px;
-            padding: 2.5rem;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
-            margin-bottom: 20px;
-            border: 2px solid white;
-        }
+        /* FABs */
+        .qr-code-fab { position: fixed; bottom: 30px; left: 30px; z-index: 100; width: 64px; height: 64px; background: white; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: var(--shadow-md); cursor: pointer; text-decoration: none; color: var(--ios-blue); font-weight: 600; font-size: 0.8rem; }
+        .qr-code-fab img { width: 32px; height: 32px; }
+        .fab-container { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column-reverse; gap: 15px; z-index: 100; }
+        .fab-main { width: 64px; height: 64px; border-radius: 50%; background: var(--ios-blue); color: white; border: none; box-shadow: 0 8px 20px rgba(0, 122, 255, 0.4); font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); transition: transform 0.2s; }
+        .fab-main:active { transform: scale(0.9); }
+        .fab-menu { display: none; flex-direction: column; gap: 12px; align-items: flex-end; }
+        .fab-container:hover .fab-menu, .fab-menu.show { display: flex; }
+        .fab-item { background: rgba(255,255,255,0.9); color: #1c1c1e; padding: 12px 20px; border-radius: 20px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1); font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(10px); white-space: nowrap; }
 
-        /* --- 📝 表單元件 --- */
-        .form-group { margin-bottom: 1.5rem; }
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 0.8rem;
-            color: var(--primary-solid);
-            font-size: 1.1rem;
-        }
-        
-        input, select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            font-size: 1rem;
-            background: #f9f9f9;
-            transition: all 0.3s;
-            color: var(--text-main);
-        }
+        /* MODALS */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 3000; }
+        .modal-overlay.open { display: flex; animation: fadeIn 0.3s; }
+        .modal { background: rgba(255,255,255,0.9); padding: 2rem; border-radius: 24px; width: 90%; max-width: 380px; text-align: center; box-shadow: var(--shadow-md); border: 1px solid rgba(255,255,255,0.6); }
+        #modal-qr img { width: 80%; max-width: 300px; border-radius: 16px; }
 
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--primary-solid);
-            background: white;
-            box-shadow: 0 0 0 4px rgba(79, 172, 254, 0.2);
-        }
-
-        /* --- 🍬 按鈕：糖果質感 --- */
-        .btn {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 50px; /* 藥丸形狀 */
-            cursor: pointer;
-            font-size: 1.1rem;
-            font-weight: bold;
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: inline-block;
-            text-align: center;
-        }
-
-        .btn:active { transform: scale(0.95); }
-        .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.15); }
-
-        .btn-primary {
-            background: var(--primary-gradient);
-            color: white;
-            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
-        }
-
-        .btn-success {
-            background: var(--accent-gradient); /* 用橘紅色更吸睛 */
-            color: white;
-            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
-        }
-
-        .btn-outline {
-            background: white;
-            border: 2px solid #e0e0e0;
-            color: var(--text-sub);
-        }
-        .btn-outline:hover {
-            border-color: var(--primary-solid);
-            color: var(--primary-solid);
-        }
-
-        /* --- 🧩 驗證碼區塊 --- */
-        .captcha-box { display: flex; gap: 10px; margin-bottom: 10px; align-items: stretch; }
-        .captcha-display {
-            background: #ffeaa7;
-            color: #d35400;
-            padding: 10px;
-            font-family: 'Courier New', monospace;
-            font-size: 1.8rem;
-            letter-spacing: 5px;
-            border-radius: 12px;
-            flex: 1;
-            text-align: center;
-            text-decoration: line-through;
-            font-weight: bold;
-            border: 2px dashed #fdcb6e;
-        }
-
-        /* --- 📚 Dashboard & Navigation --- */
-        .user-info {
-            background: white;
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            margin-bottom: 25px;
-            border-left: 8px solid var(--primary-solid);
-        }
-
-        .nav-buttons { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
-        .nav-buttons button {
-            flex: 1;
-            padding: 12px;
-            min-width: 100px;
-            border-radius: 15px;
-            border: none;
-            background: white;
-            color: var(--text-main);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            font-weight: bold;
-            transition: 0.3s;
-            cursor: pointer;
-        }
-        .nav-buttons button:hover {
-            background: var(--primary-solid);
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        /* --- 📖 書籍列表 --- */
-        .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
-        
-        .book-card {
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-            transition: 0.3s;
-            border: 1px solid #f0f0f0;
-            position: relative;
-            overflow: hidden;
-        }
-        .book-card:hover { transform: translateY(-5px); border-color: var(--primary-solid); }
-        
-        .book-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--text-main);
-            margin-bottom: 8px;
-        }
-        .book-author {
-            font-size: 0.9rem;
-            color: #aaa;
-            margin-bottom: 20px;
-            background: #f9f9f9;
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 20px;
-        }
-
-        /* --- 📊 表格樣式 --- */
-        .data-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; margin-top: 10px; }
-        .data-table th { color: #888; padding: 10px; font-size: 0.9rem; }
-        .data-table td {
-            background: white;
-            padding: 15px;
-            font-weight: bold;
-            color: var(--text-main);
-            border-top: 2px solid #f0f0f0;
-            border-bottom: 2px solid #f0f0f0;
-        }
-        .data-table td:first-child { border-left: 2px solid #f0f0f0; border-top-left-radius: 15px; border-bottom-left-radius: 15px; }
-        .data-table td:last-child { border-right: 2px solid #f0f0f0; border-top-right-radius: 15px; border-bottom-right-radius: 15px; }
-        
-        .rank-badge {
-            display: inline-flex;
-            width: 30px; height: 30px;
-            justify-content: center; align-items: center;
-            border-radius: 50%;
-            color: white;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-            font-weight: bold;
-        }
-        .rank-1 { background: linear-gradient(45deg, #ffd700, #f1c40f); transform: scale(1.2); }
-        .rank-2 { background: linear-gradient(45deg, #bdc3c7, #95a5a6); }
-        .rank-3 { background: linear-gradient(45deg, #e67e22, #d35400); }
-
-        /* --- 📝 測驗介面 --- */
-        .quiz-header {
-            display: flex; justify-content: space-between; margin-bottom: 20px;
-            background: #f0f8ff; padding: 15px; border-radius: 15px;
-            color: var(--primary-solid); font-weight: bold;
-        }
-        .question-text { font-size: 1.4rem; font-weight: bold; margin-bottom: 30px; line-height: 1.6; color: #333; }
-        
-        .option-btn {
-            width: 100%; padding: 18px; margin-bottom: 15px;
-            background: white; border: 2px solid #f0f0f0;
-            border-radius: 15px; text-align: left;
-            cursor: pointer; font-size: 1.1rem;
-            transition: 0.2s; position: relative;
-            box-shadow: 0 4px 0 #f0f0f0; /* 3D按鈕效果 */
-        }
-        .option-btn:hover { background: #eef7ff; border-color: var(--primary-solid); transform: translateY(-2px); box-shadow: 0 6px 0 #dcedfc; }
-        .option-btn:active { transform: translateY(2px); box-shadow: 0 0 0; }
-
-        /* --- 🏆 結果頁面 --- */
-        .score-circle {
-            width: 180px; height: 180px;
-            background: white;
-            border: 8px solid var(--primary-solid);
-            color: var(--primary-solid);
-            border-radius: 50%;
-            display: flex; justify-content: center; align-items: center;
-            font-size: 4rem; margin: 30px auto;
-            font-weight: bold;
-            box-shadow: 0 10px 30px rgba(79, 172, 254, 0.2);
-        }
-        .pass { color: var(--success); border-color: var(--success); }
-        .fail { color: var(--error); border-color: var(--error); }
-
-        /* --- Loading --- */
-        #loading {
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(5px);
-        }
-        .spinner {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid var(--primary-solid);
-            border-radius: 50%;
-            width: 60px; height: 60px;
-        }
-
-        /* 手機版微調 */
-        @media(max-width: 600px) {
-            .nav-buttons { flex-direction: column; }
-            .card { padding: 1.5rem; }
-            header h1 { font-size: 1.3rem; }
-        }
+        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.75); backdrop-filter: blur(10px); color: white; padding: 12px 24px; border-radius: 50px; font-size: 0.95rem; pointer-events: none; opacity: 0; transition: opacity 0.3s; z-index: 3500; font-weight: 500; }
+        .spinner { border: 3px solid rgba(0,0,0,0.1); border-top: 3px solid var(--ios-blue); border-radius: 50%; width: 20px; height: 20px; animation: spin 0.8s linear infinite; display: none;}
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>📚 嘉義國中閱讀認證系統</h1>
-    </header>
+<!-- LOGIN OVERLAY -->
+<div id="login-overlay">
+    <div class="login-card">
+        <h2 style="color: var(--ios-blue); margin-top: 0;">🔒 身份驗證</h2>
+        <div id="login-status-bar">☁️ 連線中...</div>
+        <div style="margin-bottom: 20px;">
+            <input type="password" id="password-input" class="form-control" placeholder="請輸入老師密碼" style="text-align: center; background:#f2f2f7;">
+            <button class="login-btn" style="background: var(--ios-blue); color: white;" onclick="app.auth.loginAdmin()">👨‍🏫 老師登入</button>
+        </div>
+        <div style="border-top: 1px solid #e5e5ea; padding-top: 20px;">
+            <button class="login-btn" style="background: #f2f2f7; color: var(--ios-blue);" onclick="app.auth.loginGuest()">👀 學生/訪客模式</button>
+        </div>
+    </div>
+</div>
 
-    <main>
-        <!-- 🔴 1. 登入畫面 -->
-        <section id="view-login" class="section-view active">
-            <div class="card" style="max-width: 480px; margin: 0 auto; border-top: 10px solid var(--primary-solid);">
-                <h2 style="text-align: center; margin-bottom: 25px; color: var(--text-main);">🚀 學生登入</h2>
-                <form onsubmit="event.preventDefault(); login();">
-                    <div class="form-group"><label>🏫 班級</label><select id="login-class" disabled><option>載入中...</option></select></div>
-                    <div class="form-group"><label>🪪 座號</label><input type="number" id="login-seat" min="1" max="100" placeholder="例如：5" required></div>
-                    <div class="form-group"><label>🔢 學號</label><input type="text" id="login-id" placeholder="請輸入學號" required></div>
-                    <div class="form-group"><label>🛡️ 驗證碼</label>
-                        <div class="captcha-box"><div id="captcha-show" class="captcha-display">ABCD</div><button type="button" class="btn-outline" style="width: auto; border-radius: 12px;" onclick="genCaptcha()">🔄</button></div>
-                        <input type="text" id="login-captcha" placeholder="輸入上方代碼" required>
-                    </div>
-                    <p id="login-msg" style="color: var(--error); text-align:center; margin-bottom:15px; font-weight:bold;"></p>
-                    <button type="submit" class="btn btn-primary">開始閱讀之旅！🚀</button>
-                </form>
-            </div>
-        </section>
+<header>
+    <div class="brand">
+        <img src="./assets/img/teacher_avatar.png" class="teacher-avatar" alt="avatar">
+        <span class="brand-title">奕鈞老師的課堂</span>
+        <div id="sync-spinner" class="spinner" title="同步中..."></div>
+    </div>
+    <div class="controls admin-only">
+        <button id="toggle-link" class="toggle-btn active" onclick="app.toggleLink()">🔄 連動</button>
+        <button id="toggle-sound" class="toggle-btn active-green" onclick="app.toggleSound()">🔊 音效</button>
+    </div>
+    <div class="controls" id="guest-indicator" style="display:none;">
+        <span style="font-size:0.8rem; background:rgba(0,0,0,0.05); padding:6px 10px; border-radius:12px; font-weight:600;">訪客模式</span>
+    </div>
+</header>
 
-        <!-- 🟠 2. Dashboard -->
-        <section id="view-dashboard" class="section-view">
-            <div class="user-info">
-                <div id="user-display" style="font-size: 1.3rem; font-weight: bold; margin-bottom: 15px; color: var(--primary-solid);">👋 歡迎回來</div>
-                <div class="nav-buttons">
-                    <button onclick="showView('view-dashboard')">📚 書籍列表</button>
-                    <button onclick="fetchHistory()">📜 我的紀錄</button>
-                    <button onclick="fetchLeaderboard()">🏆 全校排行</button>
-                    <button onclick="logout()" style="background: #ff7675; color: white;">登出 👋</button>
+<nav class="admin-only">
+    <button class="nav-item active" onclick="app.switchView('dashboard')">分組看板</button>
+    <button class="nav-item" onclick="app.switchView('buzzer')">🚨 搶答</button>
+    <button class="nav-item" onclick="app.switchView('admin')">後台</button>
+</nav>
+
+<main>
+    <!-- VIEW: DASHBOARD -->
+    <section id="view-dashboard" class="view-section active">
+        <div id="dashboard-buzzer-banner" class="glass-card" style="display:none; padding:15px; margin-bottom:20px; text-align:center; background: rgba(0,122,255,0.85); color:white;">
+            <h2 style="margin:0; font-size:1.4rem;">🚨 搶答進行中！</h2>
+            <div id="buzzer-rank-list" style="margin-top:10px; font-size:1.1rem; font-weight:600;">等待結果...</div>
+        </div>
+        
+        <div id="groups-container" class="dashboard-grid"></div>
+
+        <!-- COUNTDOWN TIMER -->
+        <div id="dashboard-timer" class="timer-container admin-only">
+            <h3 style="margin:0 0 10px 0; color:#1c1c1e;">⏱️ 倒數計時器</h3>
+            <div id="timer-display" class="timer-display">00:00</div>
+            <div class="timer-controls">
+                <div>
+                    <input type="number" id="timer-min" class="timer-input" value="5" min="0"> <span class="timer-label">分</span>
+                    <input type="number" id="timer-sec" class="timer-input" value="0" min="0" max="59"> <span class="timer-label">秒</span>
                 </div>
+                <button class="toggle-btn active-green" style="padding:8px 20px; font-size:1rem;" onclick="app.timer.start()">開始</button>
+                <button class="toggle-btn" style="padding:8px 20px; font-size:1rem; background:#FFCC00; color:black;" onclick="app.timer.pause()">暫停</button>
+                <button class="toggle-btn danger" style="padding:8px 20px; font-size:1rem;" onclick="app.timer.reset()">重置</button>
             </div>
+        </div>
 
-            <h3 style="margin-bottom: 20px; font-size: 1.4rem; padding-left: 10px; border-left: 5px solid var(--accent-solid);">📖 本學期推薦書單</h3>
-            <div id="book-list" class="book-grid"></div>
-        </section>
+    </section>
 
-        <!-- 📜 3. 歷史紀錄 -->
-        <section id="view-history" class="section-view">
-            <div class="card">
-                <h2 style="margin-bottom: 20px; text-align: center; color: var(--primary-solid);">📜 我的冒險紀錄</h2>
-                <div style="overflow-x: auto;">
-                    <table class="data-table">
-                        <thead><tr><th>📅 日期</th><th>📖 書名</th><th>🎯 分數</th></tr></thead>
-                        <tbody id="history-list"></tbody>
-                    </table>
-                </div>
-                <button class="btn btn-outline" style="margin-top: 25px;" onclick="showView('view-dashboard')">⬅️ 返回首頁</button>
+    <!-- VIEW: BUZZER ADMIN -->
+    <section id="view-buzzer" class="view-section admin-only">
+        <div class="admin-box" style="text-align: center; padding: 3rem 1rem;">
+            <h2 style="margin-bottom: 2rem; color:var(--ios-blue);">🚨 搶答控制器</h2>
+            <div id="buzzer-controls" style="display: flex; gap: 12px; justify-content: center; margin-bottom: 24px; flex-wrap: wrap;">
+                <button class="btn-big" style="background:var(--ios-yellow); color:black;" onclick="app.buzzer.set('ready')">✋ 預備</button>
+                <button class="btn-big" style="background:var(--ios-green); color:white;" onclick="app.buzzer.set('go')">🚀 開始</button>
+                <button class="btn-big" style="background:var(--ios-red); color:white;" onclick="app.buzzer.set('idle')">🛑 重置</button>
             </div>
-        </section>
-
-        <!-- 🏆 4. 排行榜 -->
-        <section id="view-leaderboard" class="section-view">
-            <div class="card">
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <h2 style="color: #f1c40f; text-shadow: 1px 1px 0 #e67e22; font-size: 1.8rem;">🏆 全校閱讀英雄榜</h2>
-                    <p style="color: #999; font-size: 0.9rem; margin-top: 5px;">(僅顯示前 10 名)</p>
-                </div>
-                <div style="overflow-x: auto;">
-                    <table class="data-table">
-                        <thead><tr><th>排名</th><th>班級</th><th>姓名</th><th>總積分</th></tr></thead>
-                        <tbody id="leaderboard-list"></tbody>
-                    </table>
-                </div>
-                <button class="btn btn-outline" style="margin-top: 25px;" onclick="showView('view-dashboard')">⬅️ 返回首頁</button>
+            <p style="color:#86868b;">狀態：<span id="admin-buzzer-state" style="font-weight:800; color:var(--text-primary);">IDLE</span></p>
+            <div style="margin-top:30px; padding:20px; background:rgba(255,255,255,0.5); border-radius:16px;">
+                <h3 style="margin-top:0;">🏆 結果</h3>
+                <div id="admin-buzzer-results" style="font-size:1.2rem; min-height: 40px; font-weight:600; color: #1c1c1e;">尚未開始</div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- 🟡 5. 測驗介面 -->
-        <section id="view-quiz" class="section-view">
-            <div class="card">
-                <div class="quiz-header"><span id="quiz-book-name">書名</span><span id="quiz-progress">第 1 / 10 題</span></div>
-                <div id="quiz-content"><div id="question-text" class="question-text">題目載入中...</div><div id="options-container"></div></div>
+    <!-- VIEW: ADMIN -->
+    <section id="view-admin" class="view-section admin-only">
+        <div class="admin-box">
+            <h3 class="admin-section-title">👥 分組管理</h3>
+            <div style="margin-bottom:1rem; text-align:center;">
+                <button class="toggle-btn active" style="width:100%; padding:14px; font-size:1rem; background:#FFCC00; color:black; justify-content:center;" onclick="app.admin.importFromSheet()">📥 從試算表「名單設定」載入</button>
+                <p style="font-size:0.8rem; color:#888; margin-top:5px;">(注意：此操作會重置所有分數)</p>
             </div>
-        </section>
-
-        <!-- 🟢 6. 測驗結果 -->
-        <section id="view-result" class="section-view">
-            <div class="card" style="text-align: center;">
-                <h2 style="color: var(--text-main);">測驗結束</h2>
-                <div class="score-circle" id="result-score">0</div>
-                <div id="result-msg" class="result-msg" style="font-size: 1.5rem; font-weight: bold; margin-bottom: 20px;"></div>
-                <button class="btn btn-primary" onclick="showView('view-dashboard')">📚 繼續閱讀下一本</button>
+            <div id="manual-group-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;"></div>
+            <button class="toggle-btn" style="width:100%; border:2px dashed #ccc; background:transparent; color:#86868b; margin-top:15px; padding:12px; justify-content:center;" onclick="app.admin.addGroup()">➕ 新增一組</button>
+            <button class="toggle-btn active" onclick="app.admin.saveManualGroups()" style="margin-top: 20px; width: 100%; justify-content: center; padding: 14px; font-size:1rem;">💾 儲存分組</button>
+        </div>
+        <div class="admin-box">
+            <h3 class="admin-section-title">☁️ 雲端 & 設定</h3>
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display:block; margin-bottom:8px; font-weight:600; font-size:0.9rem; color:#86868b;">GAS 網址 (已鎖定)</label>
+                <input type="text" id="gas-url" class="form-control" disabled style="background:#f2f2f7; color:#86868b; cursor:not-allowed;">
+                <div id="sync-status" style="font-size: 0.9rem; margin-top: 5px; color: var(--ios-green); font-weight:600;">🟢 已自動載入</div>
             </div>
-        </section>
-    </main>
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display:block; margin-bottom:8px; font-weight:600; font-size:0.9rem; color:#86868b;">修改老師密碼</label>
+                <input type="text" id="admin-pass-setter" class="form-control" placeholder="輸入新密碼">
+                <button class="toggle-btn" onclick="app.auth.updatePassword()">更新密碼</button>
+            </div>
+            <button class="toggle-btn active-green" style="width:100%; justify-content:center; margin-bottom: 1rem; padding:14px;" onclick="app.sync.manualSync()">☁️ 立即手動同步</button>
+            <button class="toggle-btn" style="width:100%; justify-content:center; background:#f2f2f7; color:#1c1c1e;" onclick="app.admin.exportCSV()">匯出 Excel</button>
+        </div>
+    </section>
+</main>
 
-    <div id="loading"><div class="spinner"></div><p style="margin-top:15px; font-weight:bold; color: var(--primary-solid);">資料處理中...</p></div>
+<a href="#" class="qr-code-fab" onclick="document.getElementById('modal-qr-overlay').classList.add('open')">
+    <img src="./assets/img/student_qr.png" alt="QR Code">
+    <span>搶答</span>
+</a>
 
-    <script>
-        // ===========================================
-        // ⚠️ 請填入您的 Apps Script URL
-        // ===========================================
-        const API_URL = "https://script.google.com/macros/s/AKfycbyGjJsjSQcHoYFu0TQPSG_DTO_CYd1z1s_B5pwDPWcfIpDa3DlgDC6r_WBngbC1889w/exec"; 
+<div class="fab-container admin-only">
+    <button class="fab-main" onclick="document.querySelector('.fab-menu').classList.toggle('show')">🎲</button>
+    <div class="fab-menu">
+        <button class="fab-item" onclick="app.lottery.start('group')">🏰 抽小組</button>
+        <button class="fab-item" onclick="app.lottery.start('person')">👤 抽個人</button>
+    </div>
+</div>
 
-        // 全域變數
-        let captchaCode = "";
-        let currentUser = null;
-        let currentQuiz = { questions: [], index: 0, score: 0, bookId: "", bookTitle: "" };
+<div id="modal-qr-overlay" class="modal-overlay" onclick="this.classList.remove('open')">
+    <div id="modal-qr" class="modal">
+        <h3 style="margin-top:0;">學生搶答入口</h3>
+        <img src="./assets/img/student_qr.png" alt="QR Code">
+        <p style="color:#86868b; font-size:0.9rem; margin-top:20px;">請學生掃描此 QR Code 進入搶答頁面</p>
+    </div>
+</div>
+<div id="modal-guest-select" class="modal-overlay">
+    <div class="modal"><h3 style="margin-top:0;">👋 請選擇您的組別</h3><div id="guest-group-list" style="display:flex; flex-direction:column; gap:10px;"></div></div>
+</div>
+<div id="student-buzzer-screen">
+    <div id="buzzer-status-text" class="buzzer-status-text">等候老師指令...</div>
+    <div id="buzzer-status-sub" style="color:#86868b; font-weight:500; font-size:1.2rem; margin-bottom: 30px;">您代表：<span id="my-group-name" style="color:var(--ios-blue); font-weight:700;">---</span></div>
+    <button id="buzzer-btn" class="buzzer-btn-main" onclick="app.buzzer.studentBuzz()">搶答!</button>
+    <!-- Removed exit button -->
+</div>
+<div id="modal-winner" class="modal-overlay" onclick="this.classList.remove('open')">
+    <div class="modal" onclick="event.stopPropagation()">
+        <div style="font-size: 4rem; margin-bottom:10px;">🎉</div>
+        <h3 style="margin:0; color:#86868b;">幸運得主</h3>
+        <div id="winner-name" style="font-size:2.5rem; font-weight:800; color:var(--ios-blue); margin:15px 0;">---</div>
+        <button class="toggle-btn active" style="margin: 0 auto; padding:12px 30px;" onclick="document.getElementById('modal-winner').classList.remove('open')">確定</button>
+    </div>
+</div>
+<div id="toast"></div>
 
-        window.onload = () => { genCaptcha(); fetchClassList(); };
+<script>
+/**
+ * iClass Pro v6.1 - Bug Fixes & Improvements
+ */
+const FIXED_GAS_URL = "https://script.google.com/macros/s/AKfycbwtX0PXMlu2oksFO8IqUuRoywceloA0aDSpQ0QVxo-VW4a9i6uUlJxH4Oq1QqvhWSEc/exec";
+const AppState = { groups: [], buzzer: { state: 'idle', results: [] }, settings: { linked: true, sound: true, gasUrl: FIXED_GAS_URL, password: '1234' }, userMode: 'guest', myGroup: null };
 
-        // --- API 呼叫工具 ---
-        async function callApi(payload) {
-            document.getElementById('loading').style.display = 'flex';
-            try {
-                const res = await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify(payload),
-                    headers: { 'Content-Type': 'text/plain' }
-                });
-                return await res.json();
-            } catch (err) {
-                alert("連線錯誤：" + err);
-                return { success: false };
-            } finally {
-                document.getElementById('loading').style.display = 'none';
-            }
-        }
-
-        // --- 1. 班級與登入 ---
-        async function fetchClassList() {
-            if (API_URL.includes("請填入")) return;
-            const res = await callApi({ action: "getClassList" });
-            const sel = document.getElementById('login-class');
-            sel.innerHTML = '<option value="" disabled selected>請選擇班級</option>';
-            sel.disabled = false;
-            if (res.success) res.classes.forEach(c => { const opt = document.createElement('option'); opt.value = c; opt.text = c; sel.add(opt); });
-        }
-
-        function genCaptcha() {
-            const chars = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
-            captchaCode = Array(4).fill(0).map(() => chars[Math.floor(Math.random()*chars.length)]).join('');
-            document.getElementById('captcha-show').textContent = captchaCode;
-            document.getElementById('login-captcha').value = '';
-        }
-
-        async function login() {
-            const inputCode = document.getElementById('login-captcha').value.toUpperCase();
-            if (inputCode !== captchaCode) { document.getElementById('login-msg').textContent = "🛡️ 驗證碼錯誤，請再試一次"; genCaptcha(); return; }
-            const payload = { action: "login", studentId: document.getElementById('login-id').value, class: document.getElementById('login-class').value, seat: document.getElementById('login-seat').value };
-            const res = await callApi(payload);
-            if (res.success) {
-                currentUser = { ...payload, name: res.studentName };
-                document.getElementById('user-display').innerHTML = `👋 ${currentUser.class} ${currentUser.seat}號 <b>${currentUser.name}</b>`;
-                document.getElementById('login-msg').textContent = "";
-                fetchBooks();
-                showView('view-dashboard');
-            } else {
-                document.getElementById('login-msg').textContent = "🚫 " + res.message;
-                genCaptcha();
-            }
-        }
-
-        // --- 2. 書單 ---
-        async function fetchBooks() {
-            const res = await callApi({ action: "getBookList" });
-            const container = document.getElementById('book-list');
-            container.innerHTML = '';
-            if (res.success && res.books.length > 0) {
-                res.books.forEach(book => {
-                    const div = document.createElement('div');
-                    div.className = 'book-card';
-                    div.innerHTML = `<div><div class="book-title">📖 ${book.title}</div><div class="book-author">✍️ 作者：${book.author}</div></div><button class="btn btn-success" onclick="startQuiz('${book.id}', '${book.title}')">開始挑戰 🔥</button>`;
-                    container.appendChild(div);
-                });
-            } else { container.innerHTML = '<p style="text-align:center; width:100%; color:#888;">😴 目前沒有可用的書籍。</p>'; }
-        }
-
-        // --- 3. 測驗 ---
-        async function startQuiz(bookId, bookTitle) {
-            const res = await callApi({ action: "getQuizQuestions", bookId: bookId });
-            if (!res.success) { alert(res.message); return; }
-            currentQuiz = { questions: res.questions, index: 0, score: 0, bookId: bookId, bookTitle: bookTitle };
-            renderQuestion();
-            showView('view-quiz');
-        }
-
-        function renderQuestion() {
-            const q = currentQuiz.questions[currentQuiz.index];
-            document.getElementById('quiz-book-name').textContent = "📖 " + currentQuiz.bookTitle;
-            document.getElementById('quiz-progress').textContent = `🚩 第 ${currentQuiz.index + 1} / ${currentQuiz.questions.length} 題`;
-            document.getElementById('question-text').textContent = q.q;
-            const optsContainer = document.getElementById('options-container');
-            optsContainer.innerHTML = '';
-            q.options.forEach((optText, i) => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn';
-                btn.textContent = `${i + 1}. ${optText}`;
-                btn.onclick = () => handleAnswer(i + 1);
-                optsContainer.appendChild(btn);
+const AudioSys = { ctx: null, playTone: function(freq, type, dur) { if (!AppState.settings.sound) return; if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); const o = this.ctx.createOscillator(); const g = this.ctx.createGain(); o.type = type; o.frequency.value = freq; g.gain.setValueAtTime(0.1, this.ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + dur); o.connect(g); g.connect(this.ctx.destination); o.start(); o.stop(this.ctx.currentTime + dur); }, play: function(key) { if(AppState.userMode === 'guest' && key !== 'buzz') return; switch(key) { case 'tick': this.playTone(400, 'square', 0.05); break; case 'win': this.playTone(523, 'sine', 0.1); setTimeout(()=>this.playTone(659, 'sine', 0.1), 100); setTimeout(()=>this.playTone(784, 'sine', 0.3), 200); break; case 'click': this.playTone(800, 'sine', 0.05); break; case 'ready': this.playTone(440, 'triangle', 0.3); break; case 'go': this.playTone(880, 'square', 0.5); break; case 'timeup': this.playTone(600, 'sawtooth', 0.5); setTimeout(()=>this.playTone(600, 'sawtooth', 0.5), 600); break; } } };
+const app = {
+    init: function() { 
+        for(let i=0; i<6; i++) AppState.groups.push({name: `第${i+1}組`, score:0, members:[]}); 
+        this.loadLocal(); 
+        AppState.settings.gasUrl = FIXED_GAS_URL; document.getElementById('gas-url').value = FIXED_GAS_URL; 
+        this.renderDashboard(); 
+        app.sync.pull(); 
+    },
+    auth: {
+        loginAdmin: function() { 
+            if (document.getElementById('password-input').value === AppState.settings.password) { AppState.userMode = 'admin'; this.applyMode(); } 
+            else { alert("密碼錯誤！"); } 
+        },
+        loginGuest: function() {
+            AppState.userMode = 'guest'; this.applyMode();
+            const list = document.getElementById('guest-group-list'); list.innerHTML = '';
+            AppState.groups.forEach(g => {
+                const btn = document.createElement('button'); btn.className = 'toggle-btn'; btn.style.cssText = 'padding:14px; background:rgba(0,0,0,0.05); width:100%; justify-content:center;'; btn.innerText = g.name;
+                btn.onclick = () => { AppState.myGroup = g.name; document.getElementById('my-group-name').innerText = g.name; document.getElementById('modal-guest-select').classList.remove('open'); app.buzzer.enterStudentMode(); };
+                list.appendChild(btn);
             });
+            document.getElementById('modal-guest-select').classList.add('open');
+            app.sync.startPolling(2000); 
+        },
+        applyMode: function() {
+            document.getElementById('login-overlay').style.display = 'none';
+            if (AppState.userMode === 'guest') { document.body.classList.add('mode-guest'); document.getElementById('guest-indicator').style.display = 'flex'; app.switchView('dashboard'); }
+            else { document.body.classList.remove('mode-guest'); document.getElementById('guest-indicator').style.display = 'none'; app.admin.renderManualGroups(); app.sync.pull(); }
+        },
+        updatePassword: function() {
+            const newPass = document.getElementById('admin-pass-setter').value.trim();
+            if (newPass && newPass.length >= 4) { if (confirm(`確定修改密碼為 "${newPass}"？`)) { AppState.settings.password = newPass; app.save(); app.toast("密碼已更新"); document.getElementById('admin-pass-setter').value = ''; } } 
+            else { alert("密碼太短"); }
         }
-
-        function handleAnswer(selectedOption) {
-            const q = currentQuiz.questions[currentQuiz.index];
-            if (String(selectedOption).trim() === String(q.ans).trim()) { currentQuiz.score += 10; }
-            currentQuiz.index++;
-            if (currentQuiz.index < currentQuiz.questions.length) { renderQuestion(); } else { finishQuiz(); }
+    },
+    loadLocal: function() { const d = localStorage.getItem('classDataV6_1'); if (d) { const p = JSON.parse(d); AppState.groups = p.groups || []; AppState.settings = Object.assign(AppState.settings, p.settings); AppState.buzzer = p.buzzer || { state: 'idle', results: [] }; this.updateUI(); } },
+    save: function() { if (AppState.userMode === 'guest') return; AppState.settings.gasUrl = FIXED_GAS_URL; localStorage.setItem('classDataV6_1', JSON.stringify(AppState)); this.sync.push(); },
+    updateUI: function() { document.getElementById('link-status').innerText = AppState.settings.linked ? 'ON' : 'OFF'; document.getElementById('toggle-link').className = `toggle-btn ${AppState.settings.linked ? 'active' : ''}`; document.getElementById('toggle-sound').className = `toggle-btn ${AppState.settings.sound ? 'active-green' : ''}`; },
+    toggleLink: function() { AppState.settings.linked = !AppState.settings.linked; this.updateUI(); this.save(); }, toggleSound: function() { AppState.settings.sound = !AppState.settings.sound; this.updateUI(); this.save(); },
+    switchView: function(v) { 
+        document.querySelectorAll('.view-section').forEach(e => e.classList.remove('active')); 
+        document.getElementById('view-'+v).classList.add('active'); 
+        document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active')); 
+        if (event) event.target.classList.add('active'); 
+        
+        // Intelligent Polling Speed
+        if (v === 'buzzer' && AppState.userMode === 'admin') app.sync.startPolling(1000); // Fast sync for buzzer
+        else if (AppState.userMode === 'admin') app.sync.startPolling(4000); // Slow sync for admin
+        
+        if(v === 'admin' && AppState.userMode === 'admin') app.admin.renderManualGroups(); 
+    },
+    scoreGroup: function(idx, delta) { if (AppState.userMode === 'guest') return; AppState.groups[idx].score += delta; AudioSys.play('click'); this.renderDashboard(); this.save(); },
+    scoreMember: function(gIdx, mIdx, delta) { if (AppState.userMode === 'guest') return; AppState.groups[gIdx].members[mIdx].score += delta; if (AppState.settings.linked) AppState.groups[gIdx].score += delta; AudioSys.play('click'); this.renderDashboard(); this.save(); },
+    renderDashboard: function() {
+        const c = document.getElementById('groups-container'); c.innerHTML = '';
+        const banner = document.getElementById('dashboard-buzzer-banner');
+        if (AppState.buzzer.state !== 'idle') { banner.style.display = 'block'; let html = ''; AppState.buzzer.results.forEach((r, i) => html += `<div>#${i+1} ${r.groupName}</div>`); document.getElementById('buzzer-rank-list').innerHTML = html || '等待搶答...'; } else { banner.style.display = 'none'; }
+        AppState.groups.forEach((g, gIdx) => {
+            let mHtml = ''; g.members.forEach((m, mIdx) => { mHtml += `<div class="member-row" id="m-${gIdx}-${mIdx}"><span class="member-name">${m.name}</span><div class="score-control"><button class="btn-circle btn-minus" onclick="app.scoreMember(${gIdx},${mIdx},-1)">-</button><span class="member-score">${m.score}</span><button class="btn-circle btn-plus" onclick="app.scoreMember(${gIdx},${mIdx},1)">+</button></div></div>`; });
+            let rankClass = ''; const rankIdx = AppState.buzzer.results.findIndex(r => r.groupName === g.name); if (rankIdx === 0) rankClass = 'rank-1'; else if (rankIdx === 1) rankClass = 'rank-2'; else if (rankIdx === 2) rankClass = 'rank-3';
+            const div = document.createElement('div'); div.id = `g-${gIdx}`; div.className = `glass-card group-card ${rankClass}`; div.innerHTML = `<div class="group-rank-badge">#${rankIdx+1}</div><div class="group-header"><span class="group-name">${g.name}</span><div class="score-control"><button class="btn-circle btn-minus" onclick="app.scoreGroup(${gIdx},-1)">-</button><span class="score-display">${g.score}</span><button class="btn-circle btn-plus" onclick="app.scoreGroup(${gIdx},1)">+</button></div></div><div class="member-list">${mHtml}</div>`; c.appendChild(div);
+        });
+        document.getElementById('admin-buzzer-state').innerText = AppState.buzzer.state.toUpperCase(); 
+        let resHtml = ''; 
+        AppState.buzzer.results.forEach((r, i) => resHtml += `<div>${i+1}. ${r.groupName}</div>`); 
+        document.getElementById('admin-buzzer-results').innerHTML = resHtml || '(尚未有人搶答)';
+        
+        if (AppState.userMode === 'guest') app.buzzer.updateStudentScreen();
+    },
+    buzzer: {
+        set: function(state) { AppState.buzzer.state = state; if (state === 'idle') AppState.buzzer.results = []; if (state === 'ready') AudioSys.play('ready'); if (state === 'go') AudioSys.play('go'); app.save(); app.renderDashboard(); },
+        enterStudentMode: function() { document.getElementById('student-buzzer-screen').style.display = 'flex'; this.updateStudentScreen(); }, exitStudentMode: function() { document.getElementById('student-buzzer-screen').style.display = 'none'; },
+        updateStudentScreen: function() {
+            const screen = document.getElementById('student-buzzer-screen'); const txt = document.getElementById('buzzer-status-text'); const btn = document.getElementById('buzzer-btn');
+            screen.className = `buzzer-state-${AppState.buzzer.state}`;
+            if (AppState.buzzer.state === 'idle') { txt.innerText = "老師準備中..."; btn.style.display = 'none'; } else if (AppState.buzzer.state === 'ready') { txt.innerText = "✋ 預備..."; btn.style.display = 'none'; }
+            else if (AppState.buzzer.state === 'go') { const myResult = AppState.buzzer.results.find(r => r.groupName === AppState.myGroup); if (myResult) { txt.innerText = `🏆 排名: ${AppState.buzzer.results.indexOf(myResult) + 1}`; btn.style.display = 'none'; } else { txt.innerText = "🔥 快按！"; btn.style.display = 'block'; } }
+        },
+        studentBuzz: function() { 
+            if(!AppState.myGroup) return alert("未選擇組別，請重新整理");
+            document.getElementById('buzzer-btn').style.display = 'none'; 
+            document.getElementById('buzzer-status-text').innerText = "⚡ 送出..."; 
+            AudioSys.play('go'); 
+            fetch(FIXED_GAS_URL, { method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'buzz', groupName: AppState.myGroup, timestamp: Date.now() }) })
+            .then(() => setTimeout(() => app.sync.pull(), 500)); 
         }
-
-        async function finishQuiz() {
-            const score = currentQuiz.score;
-            document.getElementById('result-score').textContent = score;
-            const msgEl = document.getElementById('result-msg');
-            const scoreCircle = document.getElementById('result-score');
-            
-            if (score >= 80) { 
-                msgEl.textContent = "🎉 太棒了！恭喜通過認證！"; 
-                msgEl.style.color = "var(--success)";
-                scoreCircle.classList.remove('fail'); scoreCircle.classList.add('pass');
-            } else { 
-                msgEl.textContent = "💪 別氣餒，再接再厲！"; 
-                msgEl.style.color = "var(--error)";
-                scoreCircle.classList.remove('pass'); scoreCircle.classList.add('fail');
-            }
-            showView('view-result');
-            await callApi({ action: "submitScore", studentId: currentUser.studentId, studentName: currentUser.name, class: currentUser.class, bookId: currentQuiz.bookId, bookTitle: currentQuiz.bookTitle, score: score });
+    },
+    timer: {
+        interval: null, timeLeft: 0,
+        start: function() { if (this.interval) return; const m = parseInt(document.getElementById('timer-min').value)||0; const s = parseInt(document.getElementById('timer-sec').value)||0; if (this.timeLeft === 0) this.timeLeft = m * 60 + s; if (this.timeLeft <= 0) return; this.interval = setInterval(() => { this.timeLeft--; this.updateDisplay(); if (this.timeLeft <= 0) { this.pause(); AudioSys.play('timeup'); alert("時間到！"); } }, 1000); this.updateDisplay(); },
+        pause: function() { clearInterval(this.interval); this.interval = null; },
+        reset: function() { this.pause(); this.timeLeft = 0; const m = parseInt(document.getElementById('timer-min').value)||0; const s = parseInt(document.getElementById('timer-sec').value)||0; document.getElementById('timer-display').innerText = `${this.pad(m)}:${this.pad(s)}`; },
+        updateDisplay: function() { const m = Math.floor(this.timeLeft / 60); const s = this.timeLeft % 60; document.getElementById('timer-display').innerText = `${this.pad(m)}:${this.pad(s)}`; },
+        pad: function(n) { return n < 10 ? '0' + n : n; }
+    },
+    admin: {
+        renderManualGroups: function() {
+            const c = document.getElementById('manual-group-container'); c.innerHTML = '';
+            AppState.groups.forEach((g, idx) => {
+                const names = g.members.map(m => m.name).join('\n');
+                const div = document.createElement('div'); div.className = 'manual-group-item';
+                div.innerHTML = `<div class="manual-group-header"><input type="text" value="${g.name}" id="gn-${idx}" style="width:120px; padding:6px; border:1px solid #ddd; border-radius:6px;"><button class="toggle-btn danger" onclick="app.admin.deleteGroup(${idx})" style="padding:4px 10px;">🗑️</button></div><textarea class="form-control" id="gt-${idx}" style="height:100px; margin-bottom:0;">${names}</textarea>`; c.appendChild(div);
+            });
+        },
+        addGroup: function() { AppState.groups.push({name: `新組別`, score: 0, members: []}); this.renderManualGroups(); },
+        deleteGroup: function(idx) { if(confirm("刪除此組？")) { AppState.groups.splice(idx, 1); this.renderManualGroups(); }},
+        saveManualGroups: function() {
+            let tempGroups = []; AppState.groups.forEach((g, idx) => { if(!document.getElementById(`gn-${idx}`)) return; let newGroup = { ...g }; newGroup.name = document.getElementById(`gn-${idx}`).value; const text = document.getElementById(`gt-${idx}`).value; newGroup.members = text.split(/\n/).map(n=>n.trim()).filter(n=>n).map(n => { const exist = g.members.find(old => old.name === n); return { name: n, score: exist ? exist.score : 0 }; }); tempGroups.push(newGroup); }); AppState.groups = tempGroups;
+            app.renderDashboard(); app.save(); app.toast("分組已儲存");
+        },
+        importFromSheet: function() {
+            if(!confirm("從試算表載入將會「重置所有分數」，確定嗎？")) return;
+            document.getElementById('sync-status').innerText = '⏳ 讀取試算表中...';
+            fetch(FIXED_GAS_URL + '?action=import_roster', { method: 'GET', redirect: 'follow' })
+            .then(r => r.json()).then(data => {
+                if(data.groups) { AppState.groups = data.groups; app.renderDashboard(); app.admin.renderManualGroups(); app.save(); app.toast("匯入成功！"); } 
+                else { alert(data.error || "匯入失敗"); }
+                document.getElementById('sync-status').innerText = '🟢 連線正常';
+            }).catch(e => alert("連線錯誤"));
+        },
+        exportCSV: function() { let csv = "\uFEFF組別,姓名,個人分,組總分\n"; AppState.groups.forEach(g => { g.members.forEach(m => csv += `${g.name},${m.name},${m.score},${g.score}\n`); }); const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'})); a.download = '成績單.csv'; a.click(); }
+    },
+    sync: {
+        timer: null,
+        startPolling: function(interval = 4000) { if (this.timer) clearInterval(this.timer); this.timer = setInterval(() => app.sync.pull(), interval); app.sync.pull(); },
+        manualSync: function() { document.getElementById('sync-status').innerText = '⏳ 同步中...'; app.save(); app.sync.pull(); },
+        push: function() { document.getElementById('sync-spinner').style.display = 'block'; fetch(FIXED_GAS_URL, { method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({action: 'save', data: AppState}) }).then(() => setTimeout(() => document.getElementById('sync-spinner').style.display = 'none', 1000)); },
+        pull: function() {
+            document.getElementById('sync-spinner').style.display = 'block';
+            fetch(FIXED_GAS_URL + '?action=read', { method: 'GET', redirect: 'follow' })
+            .then(r => r.json()).then(data => {
+                if(data && data.groups) {
+                    if (data.buzzer) AppState.buzzer = data.buzzer;
+                    AppState.groups = data.groups; if (data.settings && data.settings.linked !== undefined) AppState.settings.linked = data.settings.linked;
+                    if (data.settings && data.settings.password) AppState.settings.password = data.settings.password;
+                    app.renderDashboard(); if(AppState.userMode === 'admin') app.admin.renderManualGroups(); app.updateUI();
+                    const statusEl = document.getElementById('login-status-bar'); if(statusEl) statusEl.innerText = "☁️ 雲端資料已更新 (v)";
+                }
+                document.getElementById('sync-spinner').style.display = 'none';
+            }).catch(e => { document.getElementById('sync-spinner').style.display = 'none'; });
         }
-
-        // --- 4. 歷史紀錄與排行榜 ---
-        async function fetchHistory() {
-            const res = await callApi({ action: "getHistory", studentId: currentUser.studentId });
-            const tbody = document.getElementById('history-list');
-            tbody.innerHTML = '';
-            if (res.success && res.history.length > 0) {
-                res.history.forEach(item => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `<td>${item.date}</td><td>${item.bookTitle}</td><td>${item.score} 分</td>`;
-                    tbody.appendChild(tr);
-                });
-            } else { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:20px;">📭 尚無冒險紀錄</td></tr>'; }
-            showView('view-history');
+    },
+    lottery: {
+        timer: null,
+        start: function(mode) {
+            document.querySelector('.fab-menu').classList.remove('show');
+            app.switchView('dashboard');
+            let targets = [];
+            if (mode === 'group') { targets = AppState.groups.map((g, i) => ({ id: `g-${i}`, name: g.name })); } 
+            else { AppState.groups.forEach((g, gi) => { g.members.forEach((m, mi) => { targets.push({ id: `m-${gi}-${mi}`, name: m.name }); }); }); }
+            if (targets.length === 0) return alert("名單為空！");
+            document.querySelectorAll('.lottery-active').forEach(e => e.classList.remove('lottery-active'));
+            let count = 0; const max = 30 + Math.floor(Math.random() * 10); let speed = 50; let idx = Math.floor(Math.random() * targets.length);
+            const step = () => {
+                const prevId = targets[(idx - 1 + targets.length) % targets.length].id; const prevEl = document.getElementById(prevId); if(prevEl) prevEl.classList.remove('lottery-active');
+                const curr = targets[idx]; const el = document.getElementById(curr.id);
+                if (el) { el.classList.add('lottery-active'); el.scrollIntoView({behavior: "auto", block: "center"}); AudioSys.play('tick'); }
+                count++; idx = (idx + 1) % targets.length;
+                if (count < max) { if (count > max - 10) speed += 30; if (count > max - 5) speed += 60; this.timer = setTimeout(step, speed); } 
+                else { AudioSys.play('win'); document.getElementById('winner-name').innerText = curr.name; document.getElementById('modal-winner').classList.add('open'); }
+            };
+            step();
         }
-
-        async function fetchLeaderboard() {
-            const res = await callApi({ action: "getLeaderboard" });
-            const tbody = document.getElementById('leaderboard-list');
-            tbody.innerHTML = '';
-            if (res.success && res.leaderboard.length > 0) {
-                res.leaderboard.forEach((item, index) => {
-                    let rankClass = index < 3 ? `rank-${index+1}` : '';
-                    let badge = index < 3 ? `<span class="rank-badge ${rankClass}">${index + 1}</span>` : `<span style="font-weight:bold; color:#888;">${index + 1}</span>`;
-                    
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `<td>${badge}</td><td>${item.className}</td><td>${item.name}</td><td style="color:var(--primary-solid);">${item.total} 分</td>`;
-                    tbody.appendChild(tr);
-                });
-            } else { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px;">💤 尚無排行資料</td></tr>'; }
-            showView('view-leaderboard');
-        }
-
-        function showView(viewId) {
-            document.querySelectorAll('.section-view').forEach(el => el.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function logout() { currentUser = null; location.reload(); }
-    </script>
+    },
+    toast: function(msg) { const t = document.getElementById('toast'); t.innerText = msg; t.style.opacity = 1; setTimeout(() => t.style.opacity = 0, 2000); }
+};
+app.init();
+</script>
 </body>
 </html>
