@@ -4,28 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>嘉義國中閱讀認證系統</title>
-    <!-- 引入 Google Fonts 讓字體更可愛一點 -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=Varela+Round&display=swap" rel="stylesheet">
     <style>
-        /* --- 🎨 1. 繽紛童趣風格設定 --- */
+        /* --- 🎨 1. 繽紛童趣風格設定 (維持不變) --- */
         :root {
-            /* 主色調：天空藍漸層 */
             --primary-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             --primary-solid: #00c6fb;
-            
-            /* 強調色：活力橘 */
             --accent-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             --accent-solid: #ff7eb3;
-
-            /* 背景色：柔和雲朵白 */
             --bg-color: #f3f8ff;
             --card-bg: #ffffff;
-            
-            /* 文字色 */
             --text-main: #4a4a4a;
             --text-sub: #7a7a7a;
-
-            /* 狀態色 */
             --success: #2ecc71;
             --error: #ff6b6b;
         }
@@ -35,296 +25,113 @@
         body {
             background-color: var(--bg-color);
             background-image: radial-gradient(#e1efff 2px, transparent 2px);
-            background-size: 30px 30px; /* 點點背景 */
+            background-size: 30px 30px;
             color: var(--text-main);
-            font-family: 'Varela Round', 'Noto Sans TC', sans-serif; /* 圓潤字體 */
+            font-family: 'Varela Round', 'Noto Sans TC', sans-serif;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        /* --- 🎈 Header：漂浮雲朵感 --- */
         header {
-            width: 90%;
-            max-width: 800px;
-            margin-top: 20px;
-            background: var(--primary-gradient);
-            color: white;
-            padding: 1.2rem;
-            text-align: center;
-            border-radius: 20px;
+            width: 90%; max-width: 800px; margin-top: 20px;
+            background: var(--primary-gradient); color: white; padding: 1.2rem;
+            text-align: center; border-radius: 20px;
             box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
-            position: relative;
-            overflow: hidden;
         }
-        
-        header h1 {
-            font-size: 1.6rem;
-            letter-spacing: 2px;
-            text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
-        }
+        header h1 { font-size: 1.6rem; letter-spacing: 2px; text-shadow: 2px 2px 0px rgba(0,0,0,0.1); }
 
-        /* --- 📦 Main Container --- */
-        main {
-            width: 100%;
-            max-width: 800px;
-            padding: 20px;
-            flex: 1;
-        }
+        main { width: 100%; max-width: 800px; padding: 20px; flex: 1; }
 
-        /* --- 🃏 卡片樣式：Q彈圓潤 --- */
         .section-view { display: none; animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
         .section-view.active { display: block; }
-        
-        @keyframes popIn {
-            0% { opacity: 0; transform: scale(0.9) translateY(20px); }
-            100% { opacity: 1; transform: scale(1) translateY(0); }
-        }
+        @keyframes popIn { 0% { opacity: 0; transform: scale(0.9) translateY(20px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
 
-        .card {
-            background: var(--card-bg);
-            border-radius: 25px;
-            padding: 2.5rem;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
-            margin-bottom: 20px;
-            border: 2px solid white;
-        }
+        .card { background: var(--card-bg); border-radius: 25px; padding: 2.5rem; box-shadow: 0 15px 35px rgba(0,0,0,0.08); margin-bottom: 20px; border: 2px solid white; }
 
-        /* --- 📝 表單元件 --- */
+        /* Form Elements */
         .form-group { margin-bottom: 1.5rem; }
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 0.8rem;
-            color: var(--primary-solid);
-            font-size: 1.1rem;
-        }
-        
-        input, select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            font-size: 1rem;
-            background: #f9f9f9;
-            transition: all 0.3s;
-            color: var(--text-main);
-        }
+        label { display: block; font-weight: bold; margin-bottom: 0.8rem; color: var(--primary-solid); font-size: 1.1rem; }
+        input, select { width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 1rem; background: #f9f9f9; transition: all 0.3s; color: var(--text-main); }
+        input:focus, select:focus { outline: none; border-color: var(--primary-solid); background: white; box-shadow: 0 0 0 4px rgba(79, 172, 254, 0.2); }
 
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--primary-solid);
-            background: white;
-            box-shadow: 0 0 0 4px rgba(79, 172, 254, 0.2);
-        }
-
-        /* --- 🍬 按鈕：糖果質感 --- */
-        .btn {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 50px; /* 藥丸形狀 */
-            cursor: pointer;
-            font-size: 1.1rem;
-            font-weight: bold;
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: inline-block;
-            text-align: center;
-        }
-
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 50px; cursor: pointer; font-size: 1.1rem; font-weight: bold; transition: transform 0.2s, box-shadow 0.2s; display: inline-block; text-align: center; }
         .btn:active { transform: scale(0.95); }
         .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.15); }
+        .btn-primary { background: var(--primary-gradient); color: white; box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4); }
+        .btn-success { background: var(--accent-gradient); color: white; box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4); }
+        .btn-outline { background: white; border: 2px solid #e0e0e0; color: var(--text-sub); }
+        .btn-outline:hover { border-color: var(--primary-solid); color: var(--primary-solid); }
 
-        .btn-primary {
-            background: var(--primary-gradient);
-            color: white;
-            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
-        }
-
-        .btn-success {
-            background: var(--accent-gradient); /* 用橘紅色更吸睛 */
-            color: white;
-            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
-        }
-
-        .btn-outline {
-            background: white;
-            border: 2px solid #e0e0e0;
-            color: var(--text-sub);
-        }
-        .btn-outline:hover {
-            border-color: var(--primary-solid);
-            color: var(--primary-solid);
-        }
-
-        /* --- 🧩 驗證碼區塊 --- */
         .captcha-box { display: flex; gap: 10px; margin-bottom: 10px; align-items: stretch; }
-        .captcha-display {
-            background: #ffeaa7;
-            color: #d35400;
-            padding: 10px;
-            font-family: 'Courier New', monospace;
-            font-size: 1.8rem;
-            letter-spacing: 5px;
-            border-radius: 12px;
-            flex: 1;
-            text-align: center;
-            text-decoration: line-through;
-            font-weight: bold;
-            border: 2px dashed #fdcb6e;
-        }
+        .captcha-display { background: #ffeaa7; color: #d35400; padding: 10px; font-family: 'Courier New', monospace; font-size: 1.8rem; letter-spacing: 5px; border-radius: 12px; flex: 1; text-align: center; text-decoration: line-through; font-weight: bold; border: 2px dashed #fdcb6e; }
 
-        /* --- 📚 Dashboard & Navigation --- */
-        .user-info {
-            background: white;
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            margin-bottom: 25px;
-            border-left: 8px solid var(--primary-solid);
-        }
-
+        /* Dashboard & Nav */
+        .user-info { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 25px; border-left: 8px solid var(--primary-solid); }
         .nav-buttons { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
-        .nav-buttons button {
-            flex: 1;
-            padding: 12px;
-            min-width: 100px;
-            border-radius: 15px;
-            border: none;
-            background: white;
-            color: var(--text-main);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            font-weight: bold;
-            transition: 0.3s;
-            cursor: pointer;
+        .nav-buttons button { flex: 1; padding: 12px; min-width: 100px; border-radius: 15px; border: none; background: white; color: var(--text-main); box-shadow: 0 4px 10px rgba(0,0,0,0.05); font-weight: bold; transition: 0.3s; cursor: pointer; }
+        .nav-buttons button:hover { background: var(--primary-solid); color: white; transform: translateY(-2px); }
+
+        /* --- 🆕 分類標籤 (Tabs) --- */
+        #category-tabs {
+            display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px;
+            /* 隱藏捲軸但保留功能 */
+            scrollbar-width: none; -ms-overflow-style: none;
         }
-        .nav-buttons button:hover {
-            background: var(--primary-solid);
-            color: white;
-            transform: translateY(-2px);
+        #category-tabs::-webkit-scrollbar { display: none; }
+        
+        .tab-btn {
+            padding: 8px 16px; border-radius: 20px; border: 2px solid #e0e0e0;
+            background: white; color: #888; cursor: pointer; white-space: nowrap;
+            font-weight: bold; transition: 0.3s;
+        }
+        .tab-btn.active {
+            background: var(--primary-solid); color: white; border-color: var(--primary-solid);
+            box-shadow: 0 4px 10px rgba(79, 172, 254, 0.4);
         }
 
-        /* --- 📖 書籍列表 --- */
+        /* Books */
         .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
-        
-        .book-card {
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-            transition: 0.3s;
-            border: 1px solid #f0f0f0;
-            position: relative;
-            overflow: hidden;
-        }
+        .book-card { background: white; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 8px 20px rgba(0,0,0,0.05); transition: 0.3s; border: 1px solid #f0f0f0; }
         .book-card:hover { transform: translateY(-5px); border-color: var(--primary-solid); }
-        
-        .book-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--text-main);
-            margin-bottom: 8px;
-        }
-        .book-author {
-            font-size: 0.9rem;
-            color: #aaa;
-            margin-bottom: 20px;
-            background: #f9f9f9;
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 20px;
-        }
+        .book-title { font-size: 1.2rem; font-weight: bold; color: var(--text-main); margin-bottom: 8px; }
+        .book-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .book-author { font-size: 0.9rem; color: #aaa; background: #f9f9f9; padding: 4px 10px; border-radius: 20px; }
+        .book-category { font-size: 0.8rem; color: var(--primary-solid); font-weight: bold; }
 
-        /* --- 📊 表格樣式 --- */
+        /* Data Table */
         .data-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; margin-top: 10px; }
         .data-table th { color: #888; padding: 10px; font-size: 0.9rem; }
-        .data-table td {
-            background: white;
-            padding: 15px;
-            font-weight: bold;
-            color: var(--text-main);
-            border-top: 2px solid #f0f0f0;
-            border-bottom: 2px solid #f0f0f0;
-        }
+        .data-table td { background: white; padding: 15px; font-weight: bold; color: var(--text-main); border-top: 2px solid #f0f0f0; border-bottom: 2px solid #f0f0f0; }
         .data-table td:first-child { border-left: 2px solid #f0f0f0; border-top-left-radius: 15px; border-bottom-left-radius: 15px; }
         .data-table td:last-child { border-right: 2px solid #f0f0f0; border-top-right-radius: 15px; border-bottom-right-radius: 15px; }
-        
-        .rank-badge {
-            display: inline-flex;
-            width: 30px; height: 30px;
-            justify-content: center; align-items: center;
-            border-radius: 50%;
-            color: white;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-            font-weight: bold;
-        }
+        .rank-badge { display: inline-flex; width: 30px; height: 30px; justify-content: center; align-items: center; border-radius: 50%; color: white; box-shadow: 0 3px 6px rgba(0,0,0,0.2); font-weight: bold; }
         .rank-1 { background: linear-gradient(45deg, #ffd700, #f1c40f); transform: scale(1.2); }
         .rank-2 { background: linear-gradient(45deg, #bdc3c7, #95a5a6); }
         .rank-3 { background: linear-gradient(45deg, #e67e22, #d35400); }
 
-        /* --- 📝 測驗介面 --- */
-        .quiz-header {
-            display: flex; justify-content: space-between; margin-bottom: 20px;
-            background: #f0f8ff; padding: 15px; border-radius: 15px;
-            color: var(--primary-solid); font-weight: bold;
-        }
+        /* Quiz & Result */
+        .quiz-header { display: flex; justify-content: space-between; margin-bottom: 20px; background: #f0f8ff; padding: 15px; border-radius: 15px; color: var(--primary-solid); font-weight: bold; }
         .question-text { font-size: 1.4rem; font-weight: bold; margin-bottom: 30px; line-height: 1.6; color: #333; }
-        
-        .option-btn {
-            width: 100%; padding: 18px; margin-bottom: 15px;
-            background: white; border: 2px solid #f0f0f0;
-            border-radius: 15px; text-align: left;
-            cursor: pointer; font-size: 1.1rem;
-            transition: 0.2s; position: relative;
-            box-shadow: 0 4px 0 #f0f0f0; /* 3D按鈕效果 */
-        }
+        .option-btn { width: 100%; padding: 18px; margin-bottom: 15px; background: white; border: 2px solid #f0f0f0; border-radius: 15px; text-align: left; cursor: pointer; font-size: 1.1rem; transition: 0.2s; position: relative; box-shadow: 0 4px 0 #f0f0f0; }
         .option-btn:hover { background: #eef7ff; border-color: var(--primary-solid); transform: translateY(-2px); box-shadow: 0 6px 0 #dcedfc; }
         .option-btn:active { transform: translateY(2px); box-shadow: 0 0 0; }
-
-        /* --- 🏆 結果頁面 --- */
-        .score-circle {
-            width: 180px; height: 180px;
-            background: white;
-            border: 8px solid var(--primary-solid);
-            color: var(--primary-solid);
-            border-radius: 50%;
-            display: flex; justify-content: center; align-items: center;
-            font-size: 4rem; margin: 30px auto;
-            font-weight: bold;
-            box-shadow: 0 10px 30px rgba(79, 172, 254, 0.2);
-        }
+        .score-circle { width: 180px; height: 180px; background: white; border: 8px solid var(--primary-solid); color: var(--primary-solid); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 4rem; margin: 30px auto; font-weight: bold; box-shadow: 0 10px 30px rgba(79, 172, 254, 0.2); }
         .pass { color: var(--success); border-color: var(--success); }
         .fail { color: var(--error); border-color: var(--error); }
 
-        /* --- Loading --- */
-        #loading {
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(5px);
-        }
-        .spinner {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid var(--primary-solid);
-            border-radius: 50%;
-            width: 60px; height: 60px;
-        }
+        /* Loading */
+        #loading { background: rgba(255,255,255,0.95); backdrop-filter: blur(5px); display: none; position: fixed; top:0; left:0; width:100%; height:100%; z-index: 1000; justify-content: center; align-items: center; flex-direction: column; }
+        .spinner { border: 5px solid #f3f3f3; border-top: 5px solid var(--primary-solid); border-radius: 50%; width: 60px; height: 60px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* 手機版微調 */
-        @media(max-width: 600px) {
-            .nav-buttons { flex-direction: column; }
-            .card { padding: 1.5rem; }
-            header h1 { font-size: 1.3rem; }
-        }
+        @media(max-width: 600px) { .nav-buttons { flex-direction: column; } .card { padding: 1.5rem; } header h1 { font-size: 1.3rem; } }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>📚 嘉義國中閱讀認證系統</h1>
-    </header>
+    <header><h1>📚 嘉義國中閱讀認證系統</h1></header>
 
     <main>
         <!-- 🔴 1. 登入畫面 -->
@@ -358,6 +165,12 @@
             </div>
 
             <h3 style="margin-bottom: 20px; font-size: 1.4rem; padding-left: 10px; border-left: 5px solid var(--accent-solid);">📖 本學期推薦書單</h3>
+            
+            <!-- 🆕 新增：分類標籤區域 -->
+            <div id="category-tabs">
+                <!-- JS 自動生成按鈕 -->
+            </div>
+
             <div id="book-list" class="book-grid"></div>
         </section>
 
@@ -417,34 +230,27 @@
         // ===========================================
         // ⚠️ 請填入您的 Apps Script URL
         // ===========================================
-        const API_URL = "https://script.google.com/macros/s/AKfycbyGjJsjSQcHoYFu0TQPSG_DTO_CYd1z1s_B5pwDPWcfIpDa3DlgDC6r_WBngbC1889w/exec"; 
+        const API_URL = "請填入您的 Apps Script 網址"; 
 
         // 全域變數
         let captchaCode = "";
         let currentUser = null;
         let currentQuiz = { questions: [], index: 0, score: 0, bookId: "", bookTitle: "" };
+        let allBooksData = []; // 🆕 儲存所有書籍資料，供篩選用
 
         window.onload = () => { genCaptcha(); fetchClassList(); };
 
-        // --- API 呼叫工具 ---
         async function callApi(payload) {
             document.getElementById('loading').style.display = 'flex';
             try {
                 const res = await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify(payload),
-                    headers: { 'Content-Type': 'text/plain' }
+                    method: 'POST', body: JSON.stringify(payload), headers: { 'Content-Type': 'text/plain' }
                 });
                 return await res.json();
-            } catch (err) {
-                alert("連線錯誤：" + err);
-                return { success: false };
-            } finally {
-                document.getElementById('loading').style.display = 'none';
-            }
+            } catch (err) { alert("連線錯誤：" + err); return { success: false }; } 
+            finally { document.getElementById('loading').style.display = 'none'; }
         }
 
-        // --- 1. 班級與登入 ---
         async function fetchClassList() {
             if (API_URL.includes("請填入")) return;
             const res = await callApi({ action: "getClassList" });
@@ -463,37 +269,86 @@
 
         async function login() {
             const inputCode = document.getElementById('login-captcha').value.toUpperCase();
-            if (inputCode !== captchaCode) { document.getElementById('login-msg').textContent = "🛡️ 驗證碼錯誤，請再試一次"; genCaptcha(); return; }
+            if (inputCode !== captchaCode) { document.getElementById('login-msg').textContent = "🛡️ 驗證碼錯誤"; genCaptcha(); return; }
             const payload = { action: "login", studentId: document.getElementById('login-id').value, class: document.getElementById('login-class').value, seat: document.getElementById('login-seat').value };
             const res = await callApi(payload);
             if (res.success) {
                 currentUser = { ...payload, name: res.studentName };
                 document.getElementById('user-display').innerHTML = `👋 ${currentUser.class} ${currentUser.seat}號 <b>${currentUser.name}</b>`;
                 document.getElementById('login-msg').textContent = "";
-                fetchBooks();
+                fetchBooks(); // 登入後抓取書籍
                 showView('view-dashboard');
-            } else {
-                document.getElementById('login-msg').textContent = "🚫 " + res.message;
-                genCaptcha();
+            } else { document.getElementById('login-msg').textContent = "🚫 " + res.message; genCaptcha(); }
+        }
+
+        // --- 📖 書單處理 (含分類邏輯) ---
+        async function fetchBooks() {
+            const res = await callApi({ action: "getBookList" });
+            if (res.success) {
+                allBooksData = res.books; // 儲存到全域變數
+                renderCategoryTabs();     // 1. 產生分類按鈕
+                renderBooks('全部');       // 2. 預設顯示全部
             }
         }
 
-        // --- 2. 書單 ---
-        async function fetchBooks() {
-            const res = await callApi({ action: "getBookList" });
-            const container = document.getElementById('book-list');
-            container.innerHTML = '';
-            if (res.success && res.books.length > 0) {
-                res.books.forEach(book => {
-                    const div = document.createElement('div');
-                    div.className = 'book-card';
-                    div.innerHTML = `<div><div class="book-title">📖 ${book.title}</div><div class="book-author">✍️ 作者：${book.author}</div></div><button class="btn btn-success" onclick="startQuiz('${book.id}', '${book.title}')">開始挑戰 🔥</button>`;
-                    container.appendChild(div);
-                });
-            } else { container.innerHTML = '<p style="text-align:center; width:100%; color:#888;">😴 目前沒有可用的書籍。</p>'; }
+        // 產生分類按鈕
+        function renderCategoryTabs() {
+            const tabContainer = document.getElementById('category-tabs');
+            
+            // 抓出所有不重複的分類
+            const categories = ['全部', ...new Set(allBooksData.map(b => b.category).filter(c => c))];
+            
+            tabContainer.innerHTML = '';
+            categories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = cat === '全部' ? 'tab-btn active' : 'tab-btn';
+                btn.textContent = cat;
+                btn.onclick = () => {
+                    // 切換按鈕樣式
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    // 篩選書籍
+                    renderBooks(cat);
+                };
+                tabContainer.appendChild(btn);
+            });
         }
 
-        // --- 3. 測驗 ---
+        // 渲染書籍 (根據分類篩選)
+        function renderBooks(filterCategory) {
+            const container = document.getElementById('book-list');
+            container.innerHTML = '';
+            
+            // 篩選邏輯
+            const filteredBooks = filterCategory === '全部' 
+                ? allBooksData 
+                : allBooksData.filter(b => b.category === filterCategory);
+
+            if (filteredBooks.length > 0) {
+                filteredBooks.forEach(book => {
+                    const div = document.createElement('div');
+                    div.className = 'book-card';
+                    // 若無分類則不顯示分類標籤
+                    const catTag = book.category ? `<span class="book-category">#${book.category}</span>` : '';
+                    
+                    div.innerHTML = `
+                        <div>
+                            <div class="book-title">📖 ${book.title}</div>
+                            <div class="book-meta">
+                                <span class="book-author">✍️ ${book.author}</span>
+                                ${catTag}
+                            </div>
+                        </div>
+                        <button class="btn btn-success" onclick="startQuiz('${book.id}', '${book.title}')">開始挑戰 🔥</button>
+                    `;
+                    container.appendChild(div);
+                });
+            } else {
+                container.innerHTML = '<p style="text-align:center; width:100%; color:#888;">😴 這個分類目前沒有書籍。</p>';
+            }
+        }
+
+        // --- 測驗功能 ---
         async function startQuiz(bookId, bookTitle) {
             const res = await callApi({ action: "getQuizQuestions", bookId: bookId });
             if (!res.success) { alert(res.message); return; }
@@ -530,21 +385,18 @@
             document.getElementById('result-score').textContent = score;
             const msgEl = document.getElementById('result-msg');
             const scoreCircle = document.getElementById('result-score');
-            
             if (score >= 80) { 
-                msgEl.textContent = "🎉 太棒了！恭喜通過認證！"; 
-                msgEl.style.color = "var(--success)";
+                msgEl.textContent = "🎉 太棒了！恭喜通過認證！"; msgEl.style.color = "var(--success)";
                 scoreCircle.classList.remove('fail'); scoreCircle.classList.add('pass');
             } else { 
-                msgEl.textContent = "💪 別氣餒，再接再厲！"; 
-                msgEl.style.color = "var(--error)";
+                msgEl.textContent = "💪 別氣餒，再接再厲！"; msgEl.style.color = "var(--error)";
                 scoreCircle.classList.remove('pass'); scoreCircle.classList.add('fail');
             }
             showView('view-result');
             await callApi({ action: "submitScore", studentId: currentUser.studentId, studentName: currentUser.name, class: currentUser.class, bookId: currentQuiz.bookId, bookTitle: currentQuiz.bookTitle, score: score });
         }
 
-        // --- 4. 歷史紀錄與排行榜 ---
+        // --- 歷史紀錄與排行榜 ---
         async function fetchHistory() {
             const res = await callApi({ action: "getHistory", studentId: currentUser.studentId });
             const tbody = document.getElementById('history-list');
@@ -567,7 +419,6 @@
                 res.leaderboard.forEach((item, index) => {
                     let rankClass = index < 3 ? `rank-${index+1}` : '';
                     let badge = index < 3 ? `<span class="rank-badge ${rankClass}">${index + 1}</span>` : `<span style="font-weight:bold; color:#888;">${index + 1}</span>`;
-                    
                     const tr = document.createElement('tr');
                     tr.innerHTML = `<td>${badge}</td><td>${item.className}</td><td>${item.name}</td><td style="color:var(--primary-solid);">${item.total} 分</td>`;
                     tbody.appendChild(tr);
