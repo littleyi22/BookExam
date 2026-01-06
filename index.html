@@ -402,25 +402,40 @@
             });
         }
 
-        function handleAnswer(selectedOption) {
+ function handleAnswer(selectedOption) {
             const q = currentQuiz.questions[currentQuiz.index];
-            if (String(selectedOption).trim() === String(q.ans).trim()) { currentQuiz.score += 10; }
+            
+            // ✨ 新邏輯：動態計算每題分數
+            // 例如：5 題 -> 每題 20 分； 10 題 -> 每題 10 分
+            const pointsPerQuestion = 100 / currentQuiz.questions.length;
+
+            if (String(selectedOption).trim() === String(q.ans).trim()) {
+                // 累加分數
+                currentQuiz.score += pointsPerQuestion;
+            }
+
             currentQuiz.index++;
-            if (currentQuiz.index < currentQuiz.questions.length) { renderQuestion(); } else { finishQuiz(); }
+            if (currentQuiz.index < currentQuiz.questions.length) {
+                renderQuestion();
+            } else {
+                finishQuiz();
+            }
         }
 
-        async function finishQuiz() {
-            const score = currentQuiz.score;
+async function finishQuiz() {
+            // ✨ 新邏輯：四捨五入取整數
+            // 避免出現 99.99999 分的情況
+            const rawScore = currentQuiz.score;
+            const score = Math.round(rawScore); 
+            
             document.getElementById('result-score').textContent = score;
             const msgEl = document.getElementById('result-msg');
             const limitMsgEl = document.getElementById('limit-msg');
             const scoreCircle = document.getElementById('result-score');
             
-            // 先重置樣式
             limitMsgEl.textContent = ""; 
             scoreCircle.className = "score-circle"; 
 
-            // 上傳成績並取得後端回傳 (檢查次數)
             const res = await callApi({ 
                 action: "submitScore", 
                 studentId: currentUser.studentId, 
@@ -431,7 +446,6 @@
                 score: score 
             });
 
-            // ⚠️ 檢查是否超過次數限制
             if (res.limitReached) {
                 msgEl.textContent = "🛑 次數已達上限";
                 msgEl.style.color = "#95a5a6";
