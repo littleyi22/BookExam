@@ -6,7 +6,7 @@
     <title>嘉義國中閱讀認證系統</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=Varela+Round&display=swap" rel="stylesheet">
     <style>
-        /* --- 🎨 1. 繽紛童趣風格設定 (維持不變) --- */
+        /* --- 🎨 風格設定 (維持不變) --- */
         :root {
             --primary-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             --primary-solid: #00c6fb;
@@ -29,9 +29,7 @@
             color: var(--text-main);
             font-family: 'Varela Round', 'Noto Sans TC', sans-serif;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            display: flex; flex-direction: column; align-items: center;
         }
 
         header {
@@ -67,25 +65,53 @@
         .captcha-box { display: flex; gap: 10px; margin-bottom: 10px; align-items: stretch; }
         .captcha-display { background: #ffeaa7; color: #d35400; padding: 10px; font-family: 'Courier New', monospace; font-size: 1.8rem; letter-spacing: 5px; border-radius: 12px; flex: 1; text-align: center; text-decoration: line-through; font-weight: bold; border: 2px dashed #fdcb6e; }
 
-        /* Dashboard & Nav */
         .user-info { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 25px; border-left: 8px solid var(--primary-solid); }
         .nav-buttons { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
         .nav-buttons button { flex: 1; padding: 12px; min-width: 100px; border-radius: 15px; border: none; background: white; color: var(--text-main); box-shadow: 0 4px 10px rgba(0,0,0,0.05); font-weight: bold; transition: 0.3s; cursor: pointer; }
         .nav-buttons button:hover { background: var(--primary-solid); color: white; transform: translateY(-2px); }
 
-        /* --- 🆕 分類標籤 (Tabs) --- */
-        #category-tabs {
-            display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px;
-            /* 隱藏捲軸但保留功能 */
-            scrollbar-width: none; -ms-overflow-style: none;
+        /* --- 🔍 搜尋框樣式 --- */
+        .search-container { position: relative; margin-bottom: 15px; }
+        .search-container input { 
+            padding-left: 40px; 
+            border-radius: 50px; /* 搜尋框圓圓的 */
+            border-color: #b2bec3;
         }
-        #category-tabs::-webkit-scrollbar { display: none; }
+        .search-icon {
+            position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
+            font-size: 1.2rem; color: #b2bec3;
+        }
+
+        /* --- 🆕 分類標籤 (Tabs) - 多行顯示 --- */
+        #category-tabs {
+            display: flex; 
+            flex-wrap: wrap; /* 自動換行 */
+            gap: 10px; 
+            padding-bottom: 10px; margin-bottom: 15px;
+            justify-content: flex-start; /* 靠左對齊 */
+        }
         
         .tab-btn {
-            padding: 8px 16px; border-radius: 20px; border: 2px solid #e0e0e0;
-            background: white; color: #888; cursor: pointer; white-space: nowrap;
+            /* 計算寬度：一行5個，減去 gap 的空間 */
+            width: calc(20% - 8px); 
+            padding: 8px 5px; 
+            border-radius: 15px; 
+            border: 2px solid #e0e0e0;
+            background: white; color: #888; 
+            cursor: pointer; 
             font-weight: bold; transition: 0.3s;
+            font-size: 0.9rem;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
+        
+        /* 手機版 RWD：一行改為 3 個 */
+        @media(max-width: 600px) {
+            .tab-btn { width: calc(33.33% - 7px); }
+        }
+
         .tab-btn.active {
             background: var(--primary-solid); color: white; border-color: var(--primary-solid);
             box-shadow: 0 4px 10px rgba(79, 172, 254, 0.4);
@@ -100,7 +126,7 @@
         .book-author { font-size: 0.9rem; color: #aaa; background: #f9f9f9; padding: 4px 10px; border-radius: 20px; }
         .book-category { font-size: 0.8rem; color: var(--primary-solid); font-weight: bold; }
 
-        /* Data Table */
+        /* Tables & Quiz Styles (維持原樣) */
         .data-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; margin-top: 10px; }
         .data-table th { color: #888; padding: 10px; font-size: 0.9rem; }
         .data-table td { background: white; padding: 15px; font-weight: bold; color: var(--text-main); border-top: 2px solid #f0f0f0; border-bottom: 2px solid #f0f0f0; }
@@ -111,17 +137,18 @@
         .rank-2 { background: linear-gradient(45deg, #bdc3c7, #95a5a6); }
         .rank-3 { background: linear-gradient(45deg, #e67e22, #d35400); }
 
-        /* Quiz & Result */
         .quiz-header { display: flex; justify-content: space-between; margin-bottom: 20px; background: #f0f8ff; padding: 15px; border-radius: 15px; color: var(--primary-solid); font-weight: bold; }
         .question-text { font-size: 1.4rem; font-weight: bold; margin-bottom: 30px; line-height: 1.6; color: #333; }
         .option-btn { width: 100%; padding: 18px; margin-bottom: 15px; background: white; border: 2px solid #f0f0f0; border-radius: 15px; text-align: left; cursor: pointer; font-size: 1.1rem; transition: 0.2s; position: relative; box-shadow: 0 4px 0 #f0f0f0; }
         .option-btn:hover { background: #eef7ff; border-color: var(--primary-solid); transform: translateY(-2px); box-shadow: 0 6px 0 #dcedfc; }
         .option-btn:active { transform: translateY(2px); box-shadow: 0 0 0; }
+        
         .score-circle { width: 180px; height: 180px; background: white; border: 8px solid var(--primary-solid); color: var(--primary-solid); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 4rem; margin: 30px auto; font-weight: bold; box-shadow: 0 10px 30px rgba(79, 172, 254, 0.2); }
         .pass { color: var(--success); border-color: var(--success); }
         .fail { color: var(--error); border-color: var(--error); }
+        /* 限制次數的樣式 */
+        .limit-reached { color: #95a5a6; border-color: #95a5a6; }
 
-        /* Loading */
         #loading { background: rgba(255,255,255,0.95); backdrop-filter: blur(5px); display: none; position: fixed; top:0; left:0; width:100%; height:100%; z-index: 1000; justify-content: center; align-items: center; flex-direction: column; }
         .spinner { border: 5px solid #f3f3f3; border-top: 5px solid var(--primary-solid); border-radius: 50%; width: 60px; height: 60px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -164,12 +191,16 @@
                 </div>
             </div>
 
-            <h3 style="margin-bottom: 20px; font-size: 1.4rem; padding-left: 10px; border-left: 5px solid var(--accent-solid);">📖 本學期推薦書單</h3>
+            <h3 style="margin-bottom: 10px; font-size: 1.4rem; padding-left: 10px; border-left: 5px solid var(--accent-solid);">📖 本學期推薦書單</h3>
             
-            <!-- 🆕 新增：分類標籤區域 -->
-            <div id="category-tabs">
-                <!-- JS 自動生成按鈕 -->
+            <!-- 🔍 搜尋框 -->
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="search-input" placeholder="輸入書名關鍵字快速搜尋..." oninput="filterBooks()">
             </div>
+
+            <!-- 分類標籤區域 -->
+            <div id="category-tabs"></div>
 
             <div id="book-list" class="book-grid"></div>
         </section>
@@ -219,6 +250,7 @@
                 <h2 style="color: var(--text-main);">測驗結束</h2>
                 <div class="score-circle" id="result-score">0</div>
                 <div id="result-msg" class="result-msg" style="font-size: 1.5rem; font-weight: bold; margin-bottom: 20px;"></div>
+                <p id="limit-msg" style="color: #e67e22; font-weight: bold; margin-bottom: 10px;"></p>
                 <button class="btn btn-primary" onclick="showView('view-dashboard')">📚 繼續閱讀下一本</button>
             </div>
         </section>
@@ -236,7 +268,8 @@
         let captchaCode = "";
         let currentUser = null;
         let currentQuiz = { questions: [], index: 0, score: 0, bookId: "", bookTitle: "" };
-        let allBooksData = []; // 🆕 儲存所有書籍資料，供篩選用
+        let allBooksData = []; 
+        let currentCategory = '全部'; // 記錄目前選擇的分類
 
         window.onload = () => { genCaptcha(); fetchClassList(); };
 
@@ -276,26 +309,22 @@
                 currentUser = { ...payload, name: res.studentName };
                 document.getElementById('user-display').innerHTML = `👋 ${currentUser.class} ${currentUser.seat}號 <b>${currentUser.name}</b>`;
                 document.getElementById('login-msg').textContent = "";
-                fetchBooks(); // 登入後抓取書籍
+                fetchBooks();
                 showView('view-dashboard');
             } else { document.getElementById('login-msg').textContent = "🚫 " + res.message; genCaptcha(); }
         }
 
-        // --- 📖 書單處理 (含分類邏輯) ---
         async function fetchBooks() {
             const res = await callApi({ action: "getBookList" });
             if (res.success) {
-                allBooksData = res.books; // 儲存到全域變數
-                renderCategoryTabs();     // 1. 產生分類按鈕
-                renderBooks('全部');       // 2. 預設顯示全部
+                allBooksData = res.books;
+                renderCategoryTabs();
+                renderBooks(); // 預設全部
             }
         }
 
-        // 產生分類按鈕
         function renderCategoryTabs() {
             const tabContainer = document.getElementById('category-tabs');
-            
-            // 抓出所有不重複的分類
             const categories = ['全部', ...new Set(allBooksData.map(b => b.category).filter(c => c))];
             
             tabContainer.innerHTML = '';
@@ -304,51 +333,51 @@
                 btn.className = cat === '全部' ? 'tab-btn active' : 'tab-btn';
                 btn.textContent = cat;
                 btn.onclick = () => {
-                    // 切換按鈕樣式
                     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
-                    // 篩選書籍
-                    renderBooks(cat);
+                    currentCategory = cat;
+                    renderBooks(); // 重新渲染
                 };
                 tabContainer.appendChild(btn);
             });
         }
 
-        // 渲染書籍 (根據分類篩選)
-        function renderBooks(filterCategory) {
+        // --- 🔎 搜尋與篩選邏輯 ---
+        function filterBooks() {
+            renderBooks(); // 搜尋框輸入時觸發
+        }
+
+        function renderBooks() {
             const container = document.getElementById('book-list');
+            const searchText = document.getElementById('search-input').value.toLowerCase().trim();
             container.innerHTML = '';
             
-            // 篩選邏輯
-            const filteredBooks = filterCategory === '全部' 
-                ? allBooksData 
-                : allBooksData.filter(b => b.category === filterCategory);
+            // 雙重過濾：分類 + 關鍵字
+            const filteredBooks = allBooksData.filter(b => {
+                const matchCategory = currentCategory === '全部' || b.category === currentCategory;
+                const matchSearch = b.title.toLowerCase().includes(searchText) || b.author.toLowerCase().includes(searchText);
+                return matchCategory && matchSearch;
+            });
 
             if (filteredBooks.length > 0) {
                 filteredBooks.forEach(book => {
                     const div = document.createElement('div');
                     div.className = 'book-card';
-                    // 若無分類則不顯示分類標籤
                     const catTag = book.category ? `<span class="book-category">#${book.category}</span>` : '';
-                    
                     div.innerHTML = `
                         <div>
                             <div class="book-title">📖 ${book.title}</div>
-                            <div class="book-meta">
-                                <span class="book-author">✍️ ${book.author}</span>
-                                ${catTag}
-                            </div>
+                            <div class="book-meta"><span class="book-author">✍️ ${book.author}</span>${catTag}</div>
                         </div>
                         <button class="btn btn-success" onclick="startQuiz('${book.id}', '${book.title}')">開始挑戰 🔥</button>
                     `;
                     container.appendChild(div);
                 });
             } else {
-                container.innerHTML = '<p style="text-align:center; width:100%; color:#888;">😴 這個分類目前沒有書籍。</p>';
+                container.innerHTML = '<p style="text-align:center; width:100%; color:#888;">😴 找不到符合條件的書籍。</p>';
             }
         }
 
-        // --- 測驗功能 ---
         async function startQuiz(bookId, bookTitle) {
             const res = await callApi({ action: "getQuizQuestions", bookId: bookId });
             if (!res.success) { alert(res.message); return; }
@@ -384,19 +413,45 @@
             const score = currentQuiz.score;
             document.getElementById('result-score').textContent = score;
             const msgEl = document.getElementById('result-msg');
+            const limitMsgEl = document.getElementById('limit-msg');
             const scoreCircle = document.getElementById('result-score');
-            if (score >= 80) { 
-                msgEl.textContent = "🎉 太棒了！恭喜通過認證！"; msgEl.style.color = "var(--success)";
-                scoreCircle.classList.remove('fail'); scoreCircle.classList.add('pass');
-            } else { 
-                msgEl.textContent = "💪 別氣餒，再接再厲！"; msgEl.style.color = "var(--error)";
-                scoreCircle.classList.remove('pass'); scoreCircle.classList.add('fail');
+            
+            // 先重置樣式
+            limitMsgEl.textContent = ""; 
+            scoreCircle.className = "score-circle"; 
+
+            // 上傳成績並取得後端回傳 (檢查次數)
+            const res = await callApi({ 
+                action: "submitScore", 
+                studentId: currentUser.studentId, 
+                studentName: currentUser.name, 
+                class: currentUser.class, 
+                bookId: currentQuiz.bookId, 
+                bookTitle: currentQuiz.bookTitle, 
+                score: score 
+            });
+
+            // ⚠️ 檢查是否超過次數限制
+            if (res.limitReached) {
+                msgEl.textContent = "🛑 次數已達上限";
+                msgEl.style.color = "#95a5a6";
+                limitMsgEl.textContent = `(本書已挑戰 ${res.attempts} 次，本次分數不列入計算)`;
+                scoreCircle.classList.add('limit-reached');
+            } else {
+                if (score >= 80) { 
+                    msgEl.textContent = "🎉 太棒了！通過認證！"; 
+                    msgEl.style.color = "var(--success)";
+                    scoreCircle.classList.add('pass');
+                } else { 
+                    msgEl.textContent = "💪 別氣餒，再接再厲！"; 
+                    msgEl.style.color = "var(--error)";
+                    scoreCircle.classList.add('fail');
+                }
             }
+
             showView('view-result');
-            await callApi({ action: "submitScore", studentId: currentUser.studentId, studentName: currentUser.name, class: currentUser.class, bookId: currentQuiz.bookId, bookTitle: currentQuiz.bookTitle, score: score });
         }
 
-        // --- 歷史紀錄與排行榜 ---
         async function fetchHistory() {
             const res = await callApi({ action: "getHistory", studentId: currentUser.studentId });
             const tbody = document.getElementById('history-list');
