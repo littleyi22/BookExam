@@ -514,10 +514,100 @@
                     `;
                     tbody.appendChild(tr);
                 });
-            } else { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px;">📭 尚無冒險紀錄</td></tr>'; }
+            } else { 
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px;">📭 尚無冒險紀錄</td></tr>'; 
+            }
             showView('view-history');
+        } // ⬅️ 這裡一定要有關閉的大括號，結束 fetchHistory 函式！
+
+
+        // --- 🏆 補回：排行榜邏輯 (這是在外面，獨立的函式) ---
+        async function fetchLeaderboard() {
+            // 傳入 currentUser.studentId 以獲取個人排名
+            const res = await callApi({ action: "getLeaderboard", studentId: currentUser.studentId });
+            const tbody = document.getElementById('leaderboard-list');
+            tbody.innerHTML = '';
+
+            if (res.success && res.leaderboard.length > 0) {
+                res.leaderboard.forEach((item) => {
+                    const rank = item.rank;
+                    const title = getRankTitle(rank, item.total);
+                    
+                    // 決定邊框樣式
+                    let rowClass = "";
+                    if (rank <= 10) rowClass = "gold-border";
+                    else if (rank <= 50) rowClass = "rainbow-border";
+
+                    // 處理前三名顯示
+                    let rankDisplay = `<span class="rank-num">${rank}</span>`;
+                    if(rank <= 3) rankDisplay = `<span class="rank-num rank-top3">#${rank}</span>`;
+
+                    const tr = document.createElement('tr');
+                    tr.className = rowClass;
+                    tr.innerHTML = `
+                        <td style="text-align:center;">${rankDisplay}</td>
+                        <td>${item.className}</td>
+                        <td>
+                            ${item.name}
+                            <span class="rank-title">${title}</span>
+                        </td>
+                        <td style="color:var(--primary-solid);">${item.total}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                // 更新底部個人排名
+                document.getElementById('my-rank-footer').style.display = 'flex';
+                if (res.myRank) {
+                    const r = res.myRank.rank;
+                    const s = res.myRank.total;
+                    document.getElementById('my-rank-val').textContent = `我的排名：${r}`;
+                    document.getElementById('my-rank-score').textContent = `${s} 分`;
+                    document.getElementById('my-rank-title').textContent = `稱號：${getRankTitle(r, s)}`;
+                }
+
+            } else { 
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px;">💤 尚無排行資料</td></tr>'; 
+                document.getElementById('my-rank-footer').style.display = 'none';
+            }
+            showView('view-leaderboard');
         }
 
+        // --- 🎖️ 補回：稱號系統邏輯 (這也是在外面) ---
+        function getRankTitle(rank, score) {
+            if (score === 0) return "💤 沉睡的勇者";
+            if (!rank || rank === "-") return "🌱 旅途初心者";
+
+            if (rank === 1) return "👑 傳奇．閱讀霸主";
+            if (rank === 2) return "⚔️ 榮耀．史詩王者";
+            if (rank === 3) return "💎 璀璨．絕世鑽石";
+            if (rank === 4) return "⚜️ 華貴．智慧法皇";
+            if (rank === 5) return "🔥 不朽．智慧戰神";
+            if (rank === 6) return "🔮 奧秘．知識法王";
+            if (rank === 7) return "🛡️ 神聖．智慧聖騎";
+            if (rank === 8) return "🐉 霸氣．書海龍騎";
+            if (rank === 9) return "🩸 熱血．閱讀領主";
+            if (rank === 10) return "🏯 絕對．閱讀守護";
+
+            if (rank >= 11 && rank <= 20) return "🎖️ 榮譽．閱讀禁衛軍";
+            if (rank >= 21 && rank <= 30) return "🚀 非凡．閱讀征服者";
+            if (rank >= 31 && rank <= 40) return "⚡ 稀有．閱讀突擊隊";
+            if (rank >= 41 && rank <= 50) return "🌪️ 剽悍．閱讀毀滅者";
+            if (rank >= 51 && rank <= 60) return "🗡️ 鋒利．閱讀獵魔人";
+            if (rank >= 61 && rank <= 70) return "🦅 銳利．閱讀狙擊手";
+            if (rank >= 71 && rank <= 80) return "🌋 狂野．閱讀先鋒";
+            if (rank >= 81 && rank <= 90) return "🌲 堅韌．閱讀遊俠";
+            if (rank >= 91 && rank <= 100) return "✨ 覺醒．閱讀超新星";
+            
+            if (rank >= 101 && rank <= 200) return "🗺️ 資深冒險家";
+            if (rank >= 201 && rank <= 300) return "🔍 知識探索者";
+            if (rank >= 301 && rank <= 400) return "🧙 見習魔法師";
+            if (rank >= 401 && rank <= 500) return "🏋️ 勤奮修煉者";
+            if (rank >= 501 && rank <= 600) return "🏡 村莊新秀";
+            if (rank >= 601 && rank <= 800) return "🌱 旅途初心者";
+            
+            return "🌱 旅途初心者";
+        }
         // --- 新增：建議書單功能 ---
         function openSuggestModal() {
             document.getElementById('suggest-text').value = ''; // 清空
