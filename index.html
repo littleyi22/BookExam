@@ -211,12 +211,30 @@
             <div class="user-info">
                 <div id="user-display" style="font-size: 1.3rem; font-weight: bold; margin-bottom: 15px; color: var(--primary-solid);">👋 歡迎回來</div>
                 <div class="nav-buttons">
-                    <button onclick="showView('view-dashboard')">📚 書籍列表</button>
-                    <button onclick="fetchHistory()">📜 我的紀錄</button>
-                    <button onclick="fetchLeaderboard()">🏆 全校排行</button>
-					<button onclick="fetchContestHistory()" style="background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); color: white;">🏛️ 歷屆榮譽榜</button>
-					<button onclick="logout()" style="background: #ff7675; color: white;">登出 👋</button>
-                </div>
+					<button onclick="showView('view-dashboard')" 
+							style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+						📚 書籍列表
+					</button>
+
+					<button onclick="fetchHistory()" 
+							style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white;">
+						📜 我的紀錄
+					</button>
+
+					<button onclick="fetchLeaderboard()" 
+							style="background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); color: white;">
+						🏆 全校排行
+					</button>
+
+					<button onclick="fetchContestHistory()" 
+							style="background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); color: white;">
+						🏛️ 歷屆榮譽榜
+					</button>
+
+					<button onclick="logout()" style="background: #ff7675; color: white;">
+						登出 👋
+					</button>
+				</div>
             </div>
 
             <h3 style="margin-bottom: 10px; font-size: 1.4rem; padding-left: 10px; border-left: 5px solid var(--accent-solid);">📖 本學期推薦書單</h3>
