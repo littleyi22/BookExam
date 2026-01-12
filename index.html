@@ -181,6 +181,44 @@
 		.contest-item.open .contest-body { display: block; animation: slideDown 0.3s ease-out; }
 		.contest-item.open { border-color: var(--primary-solid); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
 		@keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+		/* --- 📜 榮譽榜內容美化 (新增) --- */
+.contest-body { 
+    display: none; 
+    padding: 0; /* 清除內距，讓列表貼齊邊緣 */
+    background: #fff; 
+    border-top: 2px solid #f1c40f; /* 金色分隔線 */
+}
+
+.contest-item.open .contest-body { 
+    display: block; 
+    animation: slideDown 0.3s ease-out; 
+}
+
+/* 每一行名單的樣式 */
+.award-row {
+    padding: 12px 20px;
+    border-bottom: 1px dashed #eee; /* 虛線分隔 */
+    color: #555;
+    font-size: 1rem;
+    line-height: 1.6;
+    transition: all 0.2s; /* 動畫過渡 */
+    display: flex;
+    align-items: center; /* 讓圖示跟文字垂直置中 */
+}
+
+/* 最後一行不要線 */
+.award-row:last-child { border-bottom: none; }
+
+/* 隔行變色效果 (斑馬紋) - 讓閱讀更清楚 */
+.award-row:nth-child(even) { background-color: #fbfbfb; }
+
+/* 滑鼠移過去的效果 */
+.award-row:hover { 
+    background-color: #fff9e6; /* 變成淡淡的金色 */
+    color: #d35400; /* 文字變深橘色 */
+    padding-left: 30px; /* 輕微向右縮排，更有互動感 */
+    font-weight: bold;
+}
     </style>
 </head>
 <body>
@@ -743,41 +781,63 @@
         }
 
         function logout() { currentUser = null; location.reload(); }
-		// --- 🏛️ 歷屆榮譽榜功能 ---
-		async function fetchContestHistory() {
-			showView('view-contest'); // 切換畫面
-			const container = document.getElementById('contest-list-container');
-			container.innerHTML = '<div class="spinner" style="margin:20px auto;"></div>'; // 顯示載入動畫
+		// --- 🏛️ 歷屆榮譽榜功能 (自動美化版) ---
+        async function fetchContestHistory() {
+            showView('view-contest'); 
+            const container = document.getElementById('contest-list-container');
+            container.innerHTML = '<div class="spinner" style="margin:20px auto;"></div>';
 
-			const res = await callApi({ action: "getContestHistory" });
+            const res = await callApi({ action: "getContestHistory" });
 
-			if (res.success && res.records.length > 0) {
-			container.innerHTML = ''; // 清空載入中
-			res.records.forEach((item, index) => {
-				// 建立 HTML 結構
-				const div = document.createElement('div');
-				div.className = 'contest-item';
-				div.innerHTML = `
-					<div class="contest-header" onclick="toggleContest(this)">
-						<span>${item.title} <span class="contest-date">${item.date}</span></span>
-						<span>▼</span>
-                </div>
-                <div class="contest-body">${item.content}</div>
-				`;
-				container.appendChild(div);
-			});
-			} else {
-				container.innerHTML = '<div style="text-align:center; padding:30px; color:#aaa;">📭 目前還沒有歷史紀錄喔！</div>';
-			}
-		}
+            if (res.success && res.records.length > 0) {
+                container.innerHTML = ''; 
+                res.records.forEach((item) => {
+                    // 👇 核心魔法：把純文字切成一行一行，並包裝成漂亮的 HTML
+                    let contentHtml = '';
+                    if (item.content) {
+                        // 以換行符號 (\n) 切割，並過濾掉空行
+                        contentHtml = item.content.split(/\n/).map(line => {
+                            const cleanLine = line.trim();
+                            if (cleanLine) {
+                                // 每一行都變成一個 div，前面加上獎牌圖示
+                                return `<div class="award-row">🎖️ ${cleanLine}</div>`;
+                            }
+                            return '';
+                        }).join('');
+                    } else {
+                        contentHtml = '<div style="padding:15px; color:#999;">(尚無名單)</div>';
+                    }
 
-		function toggleContest(headerElement) {
-			const item = headerElement.parentElement;
-			item.classList.toggle('open');
-			// 簡單的箭頭切換
-			const arrow = headerElement.querySelector('span:last-child');
-			arrow.textContent = item.classList.contains('open') ? '▲' : '▼';
-		}
+                    const div = document.createElement('div');
+                    div.className = 'contest-item';
+                    div.innerHTML = `
+                        <div class="contest-header" onclick="toggleContest(this)">
+                            <span>${item.title} <span class="contest-date">${item.date}</span></span>
+                            <span>▼</span>
+                        </div>
+                        <div class="contest-body">${contentHtml}</div>
+                    `;
+                    container.appendChild(div);
+                });
+            } else {
+                container.innerHTML = '<div style="text-align:center; padding:30px; color:#aaa;">📭 目前還沒有歷史紀錄喔！</div>';
+            }
+        } // ⬅️ 這裡要有一個大括號，結束 fetchContestHistory
+
+        // --- 負責切換展開/收合的函式 (要放在外面！) ---
+        function toggleContest(headerElement) {
+            // 找到這一區塊的最外層容器 (.contest-item)
+            const item = headerElement.parentElement;
+            
+            // 切換 open 樣式 (有 open 就拿掉，沒 open 就加上)
+            item.classList.toggle('open');
+            
+            // 切換箭頭方向 (選取最後一個 span，也就是那個 ▼)
+            const arrow = headerElement.querySelector('span:last-child');
+            if (arrow) {
+                arrow.textContent = item.classList.contains('open') ? '▲' : '▼';
+            }
+        }
     </script>
 </body>
 </html>
