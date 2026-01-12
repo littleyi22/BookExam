@@ -172,6 +172,15 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         @media(max-width: 600px) { .nav-buttons { flex-direction: column; } .card { padding: 1.5rem; } header h1 { font-size: 1.3rem; } }
+		/* --- 🏆 歷屆榮譽榜樣式 --- */
+		.contest-item { margin-bottom: 15px; border: 2px solid #eee; border-radius: 15px; overflow: hidden; transition: 0.3s; background: white; }
+		.contest-header { background: #f9f9f9; padding: 15px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: bold; color: var(--text-main); }
+		.contest-header:hover { background: #eef7ff; color: var(--primary-solid); }
+		.contest-date { font-size: 0.85rem; color: #999; font-weight: normal; margin-left: 10px; }
+		.contest-body { display: none; padding: 20px; color: #555; line-height: 1.8; border-top: 1px solid #eee; white-space: pre-wrap; /* 保留換行格式 */ background: #fff; }
+		.contest-item.open .contest-body { display: block; animation: slideDown 0.3s ease-out; }
+		.contest-item.open { border-color: var(--primary-solid); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+		@keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -205,7 +214,8 @@
                     <button onclick="showView('view-dashboard')">📚 書籍列表</button>
                     <button onclick="fetchHistory()">📜 我的紀錄</button>
                     <button onclick="fetchLeaderboard()">🏆 全校排行</button>
-                    <button onclick="logout()" style="background: #ff7675; color: white;">登出 👋</button>
+					<button onclick="fetchContestHistory()" style="background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); color: white;">🏛️ 歷屆榮譽榜</button>
+					<button onclick="logout()" style="background: #ff7675; color: white;">登出 👋</button>
                 </div>
             </div>
 
@@ -267,7 +277,20 @@
                 <button class="btn btn-outline" style="margin-top: 25px;" onclick="showView('view-dashboard')">⬅️ 返回首頁</button>
             </div>
         </section>
+		<section id="view-contest" class="section-view">
+			<div class="card">
+			<div style="text-align: center; margin-bottom: 20px;">
+				<h2 style="color: #9b59b6; font-size: 1.8rem;">🏛️ 歷屆比賽榮譽榜</h2>
+				<p style="color: #999; font-size: 0.9rem;">紀錄每一刻的光榮時刻</p>
+			</div>
+        
+			<div id="contest-list-container">
+				<p style="text-align:center;">載入中...</p>
+			</div>
 
+			<button class="btn btn-outline" style="margin-top: 25px;" onclick="showView('view-dashboard')">⬅️ 返回首頁</button>
+		</div>
+</section>
         <!-- 🟡 5. 測驗介面 -->
         <section id="view-quiz" class="section-view">
             <div class="card">
@@ -409,16 +432,24 @@
             });
         }
 
-        function filterBooks() { renderBooks(); }
-
-        function renderBooks() {
+		function renderBooks() {
             const container = document.getElementById('book-list');
-            const searchText = document.getElementById('search-input').value.toLowerCase().trim();
+            // 這裡也加一個保護，確保搜尋輸入框的值也是安全的
+            const searchInput = document.getElementById('search-input');
+            const searchText = searchInput ? searchInput.value.toLowerCase().trim() : "";
+            
             container.innerHTML = '';
             
+            // 🔍 修正重點在 filter 這一塊
             const filteredBooks = allBooksData.filter(b => {
                 const matchCategory = currentCategory === '全部' || b.category === currentCategory;
-                const matchSearch = b.title.toLowerCase().includes(searchText) || b.author.toLowerCase().includes(searchText);
+                
+                // 👇 修改開始：強制轉成文字格式，避免報錯 👇
+                const titleSafe = String(b.title || "").toLowerCase(); 
+                const authorSafe = String(b.author || "").toLowerCase();
+                // 👆 修改結束 👆
+
+                const matchSearch = titleSafe.includes(searchText) || authorSafe.includes(searchText);
                 return matchCategory && matchSearch;
             });
 
@@ -430,7 +461,9 @@
                     div.innerHTML = `<div><div class="book-title">📖 ${book.title}</div><div class="book-meta"><span class="book-author">✍️ ${book.author}</span>${catTag}</div></div><button class="btn btn-success" onclick="startQuiz('${book.id}', '${book.title}')">開始挑戰 🔥</button>`;
                     container.appendChild(div);
                 });
-            } else { container.innerHTML = '<p style="text-align:center; width:100%; color:#888;">😴 找不到符合條件的書籍。</p>'; }
+            } else { 
+                container.innerHTML = '<p style="text-align:center; width:100%; color:#888;">😴 找不到符合條件的書籍。</p>'; 
+            }
         }
 
         async function startQuiz(bookId, bookTitle) {
@@ -692,6 +725,41 @@
         }
 
         function logout() { currentUser = null; location.reload(); }
+		// --- 🏛️ 歷屆榮譽榜功能 ---
+		async function fetchContestHistory() {
+			showView('view-contest'); // 切換畫面
+			const container = document.getElementById('contest-list-container');
+			container.innerHTML = '<div class="spinner" style="margin:20px auto;"></div>'; // 顯示載入動畫
+
+			const res = await callApi({ action: "getContestHistory" });
+
+			if (res.success && res.records.length > 0) {
+			container.innerHTML = ''; // 清空載入中
+			res.records.forEach((item, index) => {
+				// 建立 HTML 結構
+				const div = document.createElement('div');
+				div.className = 'contest-item';
+				div.innerHTML = `
+					<div class="contest-header" onclick="toggleContest(this)">
+						<span>${item.title} <span class="contest-date">${item.date}</span></span>
+						<span>▼</span>
+                </div>
+                <div class="contest-body">${item.content}</div>
+				`;
+				container.appendChild(div);
+			});
+			} else {
+				container.innerHTML = '<div style="text-align:center; padding:30px; color:#aaa;">📭 目前還沒有歷史紀錄喔！</div>';
+			}
+		}
+
+		function toggleContest(headerElement) {
+			const item = headerElement.parentElement;
+			item.classList.toggle('open');
+			// 簡單的箭頭切換
+			const arrow = headerElement.querySelector('span:last-child');
+			arrow.textContent = item.classList.contains('open') ? '▲' : '▼';
+		}
     </script>
 </body>
 </html>
