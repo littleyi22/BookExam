@@ -219,6 +219,39 @@
     padding-left: 30px; /* 輕微向右縮排，更有互動感 */
     font-weight: bold;
 }
+/* --- 🔄 重新挑戰按鈕樣式 --- */
+.btn-retry {
+    background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); /* 淡橘暖色漸層 */
+    color: white;
+    box-shadow: 0 5px 15px rgba(243, 156, 18, 0.3);
+    margin-top: 15px; /* 與上方按鈕保持距離 */
+}
+.btn-retry:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(243, 156, 18, 0.4);
+}
+/* --- ⚔️ 班級對抗賽樣式 --- */
+.pk-item { margin-bottom: 20px; }
+.pk-info { display: flex; justify-content: space-between; margin-bottom: 5px; font-weight: bold; color: #555; }
+.pk-bar-bg { background: #eee; height: 24px; border-radius: 12px; overflow: hidden; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); position: relative; }
+/* 能量條動畫與漸層 */
+.pk-bar-fill { 
+    height: 100%; width: 0%; 
+    border-radius: 12px; 
+    transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1); /* 彈性動畫 */
+    display: flex; align-items: center; justify-content: flex-end; padding-right: 10px;
+    color: white; font-size: 0.8rem; font-weight: bold; text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+    /* 預設藍色 */
+    background: linear-gradient(90deg, #4facfe, #00f2fe);
+}
+
+/* 前三名特殊色 */
+.pk-rank-1 .pk-bar-fill { background: linear-gradient(90deg, #ff9a9e, #fecfef, #ff9a9e); box-shadow: 0 0 10px #ff9a9e; } /* 冠軍紅粉 */
+.pk-rank-2 .pk-bar-fill { background: linear-gradient(90deg, #a18cd1, #fbc2eb); } /* 亞軍紫 */
+.pk-rank-3 .pk-bar-fill { background: linear-gradient(90deg, #f6d365, #fda085); } /* 季軍橘金 */
+
+.pk-rank-icon { font-size: 1.2rem; margin-right: 5px; }
+
     </style>
 </head>
 <body>
@@ -268,10 +301,14 @@
 							style="background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); color: white;">
 						🏛️ 歷屆榮譽榜
 					</button>
-
+<button onclick="fetchClassPK()" 
+							style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); color: white;">
+						⚔️ 班級對抗
+					</button>
 					<button onclick="logout()" style="background: #ff7675; color: white;">
 						登出 👋
 					</button>
+					
 				</div>
             </div>
 
@@ -333,6 +370,20 @@
                 <button class="btn btn-outline" style="margin-top: 25px;" onclick="showView('view-dashboard')">⬅️ 返回首頁</button>
             </div>
         </section>
+		<section id="view-class-pk" class="section-view">
+    <div class="card">
+        <div style="text-align: center; margin-bottom: 25px;">
+            <h2 style="color: #ff6b6b; font-size: 1.8rem; text-shadow: 2px 2px 0 #eee;">⚔️ 班級閱讀爭霸戰</h2>
+            <p style="color: #888;">全班團結，爭取榮耀！(依平均積分排名)</p>
+        </div>
+
+        <div id="class-pk-list">
+            <p style="text-align:center;">計算戰況中...</p>
+        </div>
+
+        <button class="btn btn-outline" style="margin-top: 25px;" onclick="showView('view-dashboard')">⬅️ 返回首頁</button>
+    </div>
+</section>
 		<section id="view-contest" class="section-view">
 			<div class="card">
 			<div style="text-align: center; margin-bottom: 20px;">
@@ -356,15 +407,18 @@
         </section>
 
         <!-- 🟢 6. 測驗結果 -->
-        <section id="view-result" class="section-view">
-            <div class="card" style="text-align: center;">
-                <h2 style="color: var(--text-main);">測驗結束</h2>
-                <div class="score-circle" id="result-score">0</div>
-                <div id="result-msg" class="result-msg" style="font-size: 1.5rem; font-weight: bold; margin-bottom: 20px;"></div>
-                <p id="limit-msg" style="color: #e67e22; font-weight: bold; margin-bottom: 10px;"></p>
-                <button class="btn btn-primary" onclick="showView('view-dashboard')">📚 繼續閱讀下一本</button>
-            </div>
-        </section>
+		<section id="view-result" class="section-view">
+    <div class="card" style="text-align: center;">
+        <h2 style="color: var(--text-main);">測驗結束</h2>
+        <div class="score-circle" id="result-score">0</div>
+        <div id="result-msg" class="result-msg" style="font-size: 1.5rem; font-weight: bold; margin-bottom: 20px;"></div>
+        <p id="limit-msg" style="color: #e67e22; font-weight: bold; margin-bottom: 10px;"></p>
+        
+        <button class="btn btn-primary" onclick="showView('view-dashboard')">📚 繼續閱讀下一本</button>
+        
+        <button class="btn btn-retry" onclick="retryQuiz()">💪 重新挑戰</button>
+        </div>
+</section>
     </main>
 
     <!-- 底部固定個人排名 -->
@@ -580,6 +634,19 @@
             }
             showView('view-result');
         }
+
+// --- 🔄 重新挑戰功能 ---
+function retryQuiz() {
+    // 1. 重置測驗狀態 (分數歸零、回到第一題)
+    currentQuiz.index = 0;
+    currentQuiz.score = 0;
+    
+    // 2. 重新渲染第一題
+    renderQuestion();
+    
+    // 3. 切換回測驗畫面
+    showView('view-quiz');
+}
 
 // --- 修改後的 fetchHistory ---
         async function fetchHistory() {
@@ -838,6 +905,61 @@
                 arrow.textContent = item.classList.contains('open') ? '▲' : '▼';
             }
         }
+		// --- ⚔️ 班級對抗賽功能 ---
+async function fetchClassPK() {
+    showView('view-class-pk');
+    const container = document.getElementById('class-pk-list');
+    container.innerHTML = '<div class="spinner" style="margin:20px auto;"></div>';
+
+    const res = await callApi({ action: "getClassLeaderboard" });
+
+    if (res.success && res.list.length > 0) {
+        container.innerHTML = '';
+        
+        // 找出最高分，用來計算長條圖比例 (最高分 = 100% 寬度)
+        const maxScore = res.list[0].average;
+
+        res.list.forEach((item, index) => {
+            const rank = index + 1;
+            let icon = `<span style="color:#ccc; width:25px; display:inline-block;">#${rank}</span>`;
+            let rankClass = "";
+
+            // 前三名給獎盃和特殊樣式
+            if (rank === 1) { icon = "🏆"; rankClass = "pk-rank-1"; }
+            if (rank === 2) { icon = "🥈"; rankClass = "pk-rank-2"; }
+            if (rank === 3) { icon = "🥉"; rankClass = "pk-rank-3"; }
+
+            // 計算寬度百分比 (避免除以0)
+            const widthPercent = maxScore > 0 ? (item.average / maxScore) * 100 : 0;
+
+            const div = document.createElement('div');
+            div.className = `pk-item ${rankClass}`;
+            div.innerHTML = `
+                <div class="pk-info">
+                    <span>${icon} ${item.className}</span>
+                    <span>平均: <span style="font-size:1.1rem; color:#333;">${item.average}</span> 分</span>
+                </div>
+                <div class="pk-bar-bg">
+                    <div class="pk-bar-fill" style="width: 0%">
+                         ${item.totalScore} 總分
+                    </div>
+                </div>
+            `;
+            container.appendChild(div);
+
+            // 加上延遲動畫，讓長條圖慢慢跑出來
+            setTimeout(() => {
+                const bar = div.querySelector('.pk-bar-fill');
+                bar.style.width = `${widthPercent}%`;
+            }, 100 + (index * 100)); // 每一名次延遲一點點，形成階梯式動畫
+        });
+
+    } else {
+        container.innerHTML = '<div style="text-align:center; padding:30px; color:#aaa;">💤 目前戰況一片寂靜...</div>';
+    }
+}
     </script>
+	
+	
 </body>
 </html>
