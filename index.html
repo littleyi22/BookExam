@@ -325,11 +325,21 @@
 
 <!-- 📜 3. 歷史紀錄 -->
         <section id="view-history" class="section-view">
-            <div class="card">
-                <div class="history-header">
-                    <h2 style="color: var(--primary-solid); margin:0;">📜 我的冒險紀錄</h2>
-                    <button class="btn-suggest" onclick="openSuggestModal()">💡 我要推薦好書</button>
-                </div>
+    <div class="card">
+        <div class="history-header">
+            <h2 style="color: var(--primary-solid); margin:0;">📜 我的冒險紀錄</h2>
+            <button class="btn-suggest" onclick="openSuggestModal()">💡 我要推薦好書</button>
+        </div>
+
+        <div style="background: linear-gradient(135deg, #fff1eb 0%, #ace0f9 100%); padding: 20px; border-radius: 15px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+            <div>
+                <div style="font-size: 0.9rem; color: #666; font-weight: bold;">🏛️ 歷史累積積分</div>
+                <div style="font-size: 0.8rem; color: #888;">(上學期以前的榮耀)</div>
+            </div>
+            <div id="history-total-score" style="font-size: 2rem; font-weight: 900; color: #2980b9;">0</div>
+        </div>
+        <div style="overflow-x: auto;">
+				
                 
                 <div style="overflow-x: auto;">
                     <table class="data-table">
@@ -486,19 +496,38 @@
             document.getElementById('login-captcha').value = '';
         }
 
-        async function login() {
+async function login() {
             const inputCode = document.getElementById('login-captcha').value.toUpperCase();
-            if (inputCode !== captchaCode) { document.getElementById('login-msg').textContent = "🛡️ 驗證碼錯誤"; genCaptcha(); return; }
-            const payload = { action: "login", studentId: document.getElementById('login-id').value, class: document.getElementById('login-class').value, seat: document.getElementById('login-seat').value };
+            if (inputCode !== captchaCode) { 
+                document.getElementById('login-msg').textContent = "🛡️ 驗證碼錯誤"; 
+                genCaptcha(); 
+                return; 
+            }
+            
+            const payload = { 
+                action: "login", 
+                studentId: document.getElementById('login-id').value, 
+                class: document.getElementById('login-class').value, 
+                seat: document.getElementById('login-seat').value 
+            };
+
             const res = await callApi(payload);
+            
             if (res.success) {
-                currentUser = { ...payload, name: res.studentName };
+                // ✅ 登入成功
+                currentUser = { ...payload, name: res.studentName, historyScore: res.historyScore };
+                
                 document.getElementById('user-display').innerHTML = `👋 ${currentUser.class} ${currentUser.seat}號 <b>${currentUser.name}</b>`;
                 document.getElementById('login-msg').textContent = "";
+                
                 fetchBooks();
                 showView('view-dashboard');
-                fetchAnnouncement(); // 登入成功後檢查公告
-            } else { document.getElementById('login-msg').textContent = "🚫 " + res.message; genCaptcha(); }
+                fetchAnnouncement(); 
+            } else { 
+                // ❌ 登入失敗
+                document.getElementById('login-msg').textContent = "🚫 " + res.message; 
+                genCaptcha(); 
+            }
         }
 
         async function fetchAnnouncement() {
@@ -648,33 +677,79 @@ function retryQuiz() {
     showView('view-quiz');
 }
 
-// --- 修改後的 fetchHistory ---
-        async function fetchHistory() {
-            const res = await callApi({ action: "getHistory", studentId: currentUser.studentId });
-            const tbody = document.getElementById('history-list');
-            tbody.innerHTML = '';
-            if (res.success && res.history.length > 0) {
-                res.history.forEach(item => {
-                    const tr = document.createElement('tr');
-                    // 判斷是否為不計分
-                    let scoreDisplay = `${item.score} 分`;
-                    if (item.note === "不計分") {
-                        scoreDisplay = `<span style="color:#aaa; text-decoration:line-through;">${item.score}</span> <span style="font-size:0.8rem; color:#e74c3c;">(不計)</span>`;
-                    }
-                    
-                    tr.innerHTML = `
-                        <td>${item.date}</td>
-                        <td>${item.bookTitle}</td>
-                        <td style="text-align:center;"><span style="background:#eee; padding:2px 8px; border-radius:10px; font-size:0.85rem;">第 ${item.nth} 次</span></td>
-                        <td>${scoreDisplay}</td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            } else { 
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px;">📭 尚無冒險紀錄</td></tr>'; 
+
+// --- 修改後的 fetchHistory (前端顯示邏輯) ---
+async function fetchHistory() {
+    // 1. 處理歷史積分顯示 (支援分學期)
+    const scoreBox = document.getElementById('history-total-score');
+    let historyHtml = '';
+    
+    try {
+        // 嘗試解析 JSON (例如: {"112上": 200, "112下": 50})
+        let rawScore = currentUser.historyScore;
+        // 如果是字串格式的 JSON，先轉物件
+        if (typeof rawScore === 'string' && rawScore.startsWith('{')) {
+            rawScore = JSON.parse(rawScore);
+        }
+
+        if (typeof rawScore === 'object' && rawScore !== null) {
+            // 如果是物件，就迴圈顯示每一學期
+            let totalSum = 0;
+            for (let term in rawScore) {
+                let s = rawScore[term];
+                totalSum += s;
+                historyHtml += `<div style="font-size:0.9rem; margin-top:3px;">
+                                  <span style="color:#666;">${term}:</span> 
+                                  <span style="color:#2980b9; font-weight:bold;">${s}</span>
+                                </div>`;
             }
-            showView('view-history');
-        } // ⬅️ 這裡一定要有關閉的大括號，結束 fetchHistory 函式！
+            // 最上面顯示加總
+            historyHtml = `<div style="font-size:1.8rem; font-weight:900; color:#2980b9;">${totalSum}</div>` + historyHtml;
+        } else {
+            // 舊版 (純數字)
+            historyHtml = `<div style="font-size:2rem; font-weight:900; color:#2980b9;">${rawScore || 0}</div>`;
+        }
+    } catch (e) {
+        historyHtml = `<div style="font-size:2rem; font-weight:900; color:#2980b9;">0</div>`;
+    }
+    
+    scoreBox.innerHTML = historyHtml;
+    // (稍微調整一下 scoreBox 的 CSS 讓它能垂直排列)
+    scoreBox.style.flexDirection = 'column';
+    scoreBox.style.alignItems = 'flex-end';
+    scoreBox.style.fontSize = '1rem'; // 重置預設大小
+
+    // 2. 呼叫 API 取得列表 (這部分不用變)
+    const res = await callApi({ action: "getHistory", studentId: currentUser.studentId });
+    const tbody = document.getElementById('history-list');
+    tbody.innerHTML = '';
+
+    if (res.success && res.history.length > 0) {
+        res.history.forEach(item => {
+            const tr = document.createElement('tr');
+            
+            // 判斷是否為不計分
+            let scoreDisplay = `${item.score} 分`;
+            if (item.note === "不計分") {
+                scoreDisplay = `<span style="color:#aaa; text-decoration:line-through;">${item.score}</span> <span style="font-size:0.8rem; color:#e74c3c;">(不計)</span>`;
+            }
+            
+            // 加入學期標籤 (例如：[歷年] 或 [本學期])
+            let termTag = item.term === "歷年" ? `<span style="background:#ffeaa7; font-size:0.7rem; padding:2px 5px; border-radius:5px; margin-right:5px;">存摺</span>` : ``;
+
+            tr.innerHTML = `
+                <td>${item.date}</td>
+                <td>${termTag}${item.bookTitle}</td>
+                <td style="text-align:center;"><span style="background:#eee; padding:2px 8px; border-radius:10px; font-size:0.85rem;">第 ${item.nth} 次</span></td>
+                <td>${scoreDisplay}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } else { 
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px;">📭 尚無冒險紀錄</td></tr>'; 
+    }
+    showView('view-history');
+}
 
 
         // --- 🏆 補回：排行榜邏輯 (這是在外面，獨立的函式) ---
@@ -905,59 +980,57 @@ function retryQuiz() {
                 arrow.textContent = item.classList.contains('open') ? '▲' : '▼';
             }
         }
-		// --- ⚔️ 班級對抗賽功能 ---
-async function fetchClassPK() {
-    showView('view-class-pk');
-    const container = document.getElementById('class-pk-list');
-    container.innerHTML = '<div class="spinner" style="margin:20px auto;"></div>';
+// --- ⚔️ 班級對抗賽功能 ---
+        async function fetchClassPK() {
+            showView('view-class-pk');
+            const container = document.getElementById('class-pk-list');
+            container.innerHTML = '<div class="spinner" style="margin:20px auto;"></div>';
 
-    const res = await callApi({ action: "getClassLeaderboard" });
+            const res = await callApi({ action: "getClassLeaderboard" });
 
-    if (res.success && res.list.length > 0) {
-        container.innerHTML = '';
-        
-        // 找出最高分，用來計算長條圖比例 (最高分 = 100% 寬度)
-        const maxScore = res.list[0].average;
+            if (res.success && res.list.length > 0) {
+                container.innerHTML = '';
+                
+                // 找出最高分，用來計算長條圖比例
+                const maxScore = res.list[0].average;
 
-        res.list.forEach((item, index) => {
-            const rank = index + 1;
-            let icon = `<span style="color:#ccc; width:25px; display:inline-block;">#${rank}</span>`;
-            let rankClass = "";
+                res.list.forEach((item, index) => {
+                    const rank = index + 1;
+                    let icon = `<span style="color:#ccc; width:25px; display:inline-block;">#${rank}</span>`;
+                    let rankClass = "";
 
-            // 前三名給獎盃和特殊樣式
-            if (rank === 1) { icon = "🏆"; rankClass = "pk-rank-1"; }
-            if (rank === 2) { icon = "🥈"; rankClass = "pk-rank-2"; }
-            if (rank === 3) { icon = "🥉"; rankClass = "pk-rank-3"; }
+                    if (rank === 1) { icon = "🏆"; rankClass = "pk-rank-1"; }
+                    if (rank === 2) { icon = "🥈"; rankClass = "pk-rank-2"; }
+                    if (rank === 3) { icon = "🥉"; rankClass = "pk-rank-3"; }
 
-            // 計算寬度百分比 (避免除以0)
-            const widthPercent = maxScore > 0 ? (item.average / maxScore) * 100 : 0;
+                    const widthPercent = maxScore > 0 ? (item.average / maxScore) * 100 : 0;
 
-            const div = document.createElement('div');
-            div.className = `pk-item ${rankClass}`;
-            div.innerHTML = `
-                <div class="pk-info">
-                    <span>${icon} ${item.className}</span>
-                    <span>平均: <span style="font-size:1.1rem; color:#333;">${item.average}</span> 分</span>
-                </div>
-                <div class="pk-bar-bg">
-                    <div class="pk-bar-fill" style="width: 0%">
-                         ${item.totalScore} 總分
-                    </div>
-                </div>
-            `;
-            container.appendChild(div);
+                    const div = document.createElement('div');
+                    div.className = `pk-item ${rankClass}`;
+                    div.innerHTML = `
+                        <div class="pk-info">
+                            <span>${icon} ${item.className}</span>
+                            <span>平均: <span style="font-size:1.1rem; color:#333;">${item.average}</span> 分</span>
+                        </div>
+                        <div class="pk-bar-bg">
+                            <div class="pk-bar-fill" style="width: 0%">
+                                ${item.totalScore} 總分
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(div);
 
-            // 加上延遲動畫，讓長條圖慢慢跑出來
-            setTimeout(() => {
-                const bar = div.querySelector('.pk-bar-fill');
-                bar.style.width = `${widthPercent}%`;
-            }, 100 + (index * 100)); // 每一名次延遲一點點，形成階梯式動畫
-        });
+                    setTimeout(() => {
+                        const bar = div.querySelector('.pk-bar-fill');
+                        if(bar) bar.style.width = `${widthPercent}%`;
+                    }, 100 + (index * 100));
+                });
+            } else {
+                // 👇 之前少的就是這個 else
+                container.innerHTML = '<div style="text-align:center; padding:30px; color:#aaa;">💤 目前戰況一片寂靜...</div>';
+            }
+        }
 
-    } else {
-        container.innerHTML = '<div style="text-align:center; padding:30px; color:#aaa;">💤 目前戰況一片寂靜...</div>';
-    }
-}
     </script>
 	
 	
