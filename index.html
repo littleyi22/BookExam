@@ -547,7 +547,9 @@ async function login() {
         async function fetchBooks() {
             const res = await callApi({ action: "getBookList" });
             if (res.success) {
-                allBooksData = res.books;
+				// 👇 書單由大到小排列
+                allBooksData = res.books.reverse();
+				
                 renderCategoryTabs();
                 renderBooks();
             }
