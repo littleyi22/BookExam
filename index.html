@@ -653,10 +653,20 @@ async function login() {
             });
 
             if (res.limitReached) {
-                msgEl.textContent = "🛑 次數已達上限"; msgEl.style.color = "#95a5a6";
-                limitMsgEl.textContent = `(本書已挑戰 ${res.attempts} 次，本次分數不列入計算)`;
-                scoreCircle.classList.add('limit-reached');
+                // 第 6 次以後：檢查分數是否有 80 分
+                if (score >= 80) {
+                    msgEl.textContent = "🎉 通過認證！(但不計分)"; 
+                    msgEl.style.color = "var(--success)"; 
+                    limitMsgEl.textContent = `(本書已挑戰 ${res.attempts} 次，本次不列入排行榜積分)`;
+                    scoreCircle.classList.add('pass');
+                } else {
+                    msgEl.textContent = "🛑 次數已達上限"; 
+                    msgEl.style.color = "#95a5a6";
+                    limitMsgEl.textContent = `(本書已挑戰 ${res.attempts} 次，本次不列入計算)`;
+                    scoreCircle.classList.add('limit-reached');
+                }
             } else {
+                // 第 1~5 次
                 if (score >= 80) { 
                     msgEl.textContent = "🎉 太棒了！通過認證！"; msgEl.style.color = "var(--success)"; scoreCircle.classList.add('pass');
                 } else { 
@@ -730,10 +740,16 @@ async function fetchHistory() {
         res.history.forEach(item => {
             const tr = document.createElement('tr');
             
-            // 判斷是否為不計分
+            // 判斷是否為不計分以及是否通過認證
             let scoreDisplay = `${item.score} 分`;
             if (item.note === "不計分") {
-                scoreDisplay = `<span style="color:#aaa; text-decoration:line-through;">${item.score}</span> <span style="font-size:0.8rem; color:#e74c3c;">(不計)</span>`;
+                if (item.score >= 80) {
+                    // 第 6 次以後考過：顯示綠色的「已認證」
+                    scoreDisplay = `<span style="color:#aaa; text-decoration:line-through;">${item.score}</span> <br><span style="font-size:0.8rem; color:#2ecc71; font-weight:bold;">✅ 已認證(不計分)</span>`;
+                } else {
+                    // 第 6 次以後沒考過：顯示紅色的「不計分」
+                    scoreDisplay = `<span style="color:#aaa; text-decoration:line-through;">${item.score}</span> <span style="font-size:0.8rem; color:#e74c3c;">(不計分)</span>`;
+                }
             }
             
             // 加入學期標籤 (例如：[歷年] 或 [本學期])
