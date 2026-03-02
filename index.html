@@ -3,44 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>系統搬家囉！自動跳轉中...</title>
-    
-    <meta http-equiv="refresh" content="0; url=https://script.google.com/macros/s/AKfycbyGjJsjSQcHoYFu0TQPSG_DTO_CYd1z1s_B5pwDPWcfIpDa3DlgDC6r_WBngbC1889w/exec">
-    
+    <title>網站搬家公告｜嘉義國中閱讀認證系統</title>
     <style>
+        /* 延續原本的溫暖漸層風格 */
+        :root {
+            --primary-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --primary-solid: #00c6fb;
+            --bg-color: #f3f8ff;
+            --text-main: #4a4a4a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            font-family: '微軟正黑體', sans-serif;
+            font-family: 'Varela Round', 'Microsoft JhengHei', sans-serif;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(#e1efff 2px, transparent 2px);
+            background-size: 30px 30px;
+            color: var(--text-main);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background-color: #f0f8ff;
-            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .notice-card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
             text-align: center;
+            max-width: 500px;
+            width: 100%;
+            border-top: 10px solid var(--primary-solid);
+            animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
         }
-        .spinner {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3498db;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
+
+        @keyframes popIn { 
+            0% { opacity: 0; transform: scale(0.9) translateY(20px); } 
+            100% { opacity: 1; transform: scale(1) translateY(0); } 
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        a { color: #3498db; font-weight: bold; text-decoration: none; }
-        a:hover { text-decoration: underline; }
+
+        .icon-truck {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            animation: bounce 2s infinite ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        h1 {
+            color: var(--primary-solid);
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .url-text {
+            display: block;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            color: #888;
+            word-break: break-all;
+            margin-bottom: 25px;
+            border: 1px dashed #ccc;
+        }
+
+        .btn-link {
+            display: inline-block;
+            background: var(--primary-gradient);
+            color: white;
+            text-decoration: none;
+            padding: 15px 35px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(79, 172, 254, 0.6);
+        }
+        
+        .btn-link:active {
+            transform: translateY(2px);
+            box-shadow: 0 0 0;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 0.9rem;
+            color: #aaa;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
-    <div class="spinner"></div>
-    <h2>嘉義國中閱讀認證系統已經搬家囉！</h2>
-    <p>正在為您導向新系統...</p>
-    <p>如果畫面沒有自動跳轉，請 <a href="https://script.google.com/macros/s/AKfycbyGjJsjSQcHoYFu0TQPSG_DTO_CYd1z1s_B5pwDPWcfIpDa3DlgDC6r_WBngbC1889w/exec">點擊這裡</a> 前往新網站。</p>
 
-    <script>
-        window.location.replace("https://script.google.com/macros/s/AKfycbyGjJsjSQcHoYFu0TQPSG_DTO_CYd1z1s_B5pwDPWcfIpDa3DlgDC6r_WBngbC1889w/exec");
-    </script>
+    <div class="notice-card">
+        <div class="icon-truck">🚚</div>
+        <h1>系統搬家公告</h1>
+        <p>
+            親愛的同學與老師：<br>
+            為了提供更優質、穩定的閱讀體驗，<br>
+            <b>嘉義國中閱讀認證系統</b> 已經遷移至全新網站囉！
+        </p>
+        
+        <div class="url-text">
+            新網址：<br>
+            sites.google.com/view/read-certification/
+        </div>
+
+        <a href="https://sites.google.com/view/read-certification/" class="btn-link">
+            🚀 立即前往新網站
+        </a>
+    </div>
+
+    <div class="footer">奕鈞老師設計</div>
+
 </body>
 </html>
